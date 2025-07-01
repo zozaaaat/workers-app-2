@@ -1,0 +1,26 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+python-multipart
+passlib[bcrypt]
+python-jose
+requests
+httpx
+
+# For testing
+pytest
+pytest-asyncio
+httpx[http2]
+
+# Optional for database inspection/debugging
+aiosqlite
+
+# For environment variables (if needed later)
+python-dotenv
+
+# For CORS handling
+starlette
+
+# For typing and dev support (اختياري لو بتستخدم MyPy أو IDE ذكي)
+types-requests
