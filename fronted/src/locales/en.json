@@ -1,0 +1,49 @@
+{
+  "sidebar": {
+    "companies": "Companies",
+    "workers": "Workers",
+    "licenses": "Licenses",
+    "leaves": "Leaves",
+    "deductions": "Deductions",
+    "violations": "Violations",
+    "endofservice": "End of Service",
+    "activity_log": "Activity Log",
+    "dark_mode": "Dark Mode",
+    "light_mode": "Light Mode",
+    "language": "Language"
+  },
+  "general": {
+    "search": "Search",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel",
+    "actions": "Actions",
+    "delete_success": "Item deleted successfully",
+    "delete_error": "Error while deleting",
+    "confirm_delete_title": "Confirm Delete",
+    "confirm_delete_msg": "Are you sure you want to delete this item? This action cannot be undone.",
+    "export_excel": "Export Excel",
+    "export_pdf": "Export PDF",
+    "print": "Print"
+  },
+  "company_details": {
+    "file_number": "File Number",
+    "file_status": "Status",
+    "commercial_registration_number": "Commercial Registration Number",
+    "file_classification": "File Classification",
+    "administration": "Administration",
+    "file_type": "File Type",
+    "legal_entity": "Legal Entity",
+    "ownership_category": "Ownership Category",
+    "total_workers": "Total Workers",
+    "total_licenses": "Total Licenses",
+    "creation_date": "Creation Date"
+  },
+  "annual_leave": {
+    "annual_leave_exceeded": "Annual leave balance exceeded. Remaining:",
+    "annual_leave_balance": "Annual leave balance left",
+    "day_remain": "day(s)"
+  }
+}
