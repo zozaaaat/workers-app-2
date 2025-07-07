@@ -12,6 +12,10 @@ class WorkerBase(BaseModel):
     work_permit_start: Optional[date]
     work_permit_end: Optional[date]
     salary: Optional[float]
+    custom_id: Optional[str] = None
+
+    class Config:
+        orm_mode = True
 
 class WorkerCreate(WorkerBase):
     civil_id: str
@@ -39,16 +43,23 @@ class WorkerUpdate(BaseModel):
     company_id: Optional[int] = None
     license_id: Optional[int] = None
 
-    model_config = {
-        "from_attributes": True,
-        "arbitrary_types_allowed": True,
-    }
+    class Config:
+        orm_mode = True
 
 class Worker(WorkerBase):
     id: int
     company_id: int
+    license_id: Optional[int] = None
+    custom_id: Optional[str] = None  # تأكيد ظهور الحقل في Worker النهائي
 
-    model_config = {
-        "from_attributes": True,
-        "arbitrary_types_allowed": True,
-    }
+    class Config:
+        orm_mode = True
+
+class WorkerOut(BaseModel):
+    id: int
+    civil_id: str
+    name: Optional[str]
+    custom_id: Optional[str]
+
+    class Config:
+        orm_mode = True

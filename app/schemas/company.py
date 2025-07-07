@@ -1,8 +1,6 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 from datetime import date
-
-from app.models import License, Worker  # استيراد النماذج من models
 
 class CompanyBase(BaseModel):
     file_number: str
@@ -36,12 +34,9 @@ class CompanyUpdate(BaseModel):
 
 class Company(CompanyBase):
     id: int
-    licenses: Optional[List[License]] = []
-    workers: Optional[List[Worker]] = []
-
     model_config = {
         "from_attributes": True,
         "arbitrary_types_allowed": True,
     }
-
-Company.update_forward_refs()
+    class Config:
+        orm_mode = True

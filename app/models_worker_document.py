@@ -13,5 +13,6 @@ class WorkerDocument(Base):
     filepath = Column(String, nullable=False)
     uploaded_at = Column(DateTime, default=datetime.utcnow)
     description = Column(String)
+    doc_type = Column(String, nullable=False, default="other")  # passport, work_permit, civil_id, other
 
     worker = relationship("Worker", back_populates="documents")

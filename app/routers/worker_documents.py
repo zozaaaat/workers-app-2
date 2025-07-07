@@ -7,6 +7,8 @@ from app.schemas.worker_document import WorkerDocument as WorkerDocumentSchema
 from typing import List
 import os
 from datetime import datetime
+from app.utils import ocr
+from app import crud, models
 
 router = APIRouter(
     prefix="/worker_documents",
@@ -20,6 +22,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 def upload_worker_document(
     worker_id: int = Form(...),
     description: str = Form(None),
+    doc_type: str = Form(...),
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
@@ -29,8 +32,12 @@ def upload_worker_document(
         buffer.write(file.file.read())
     filetype = file.content_type
     doc = worker_documents.create_worker_document(
-        db, worker_id=worker_id, filename=file.filename, filetype=filetype, filepath=filepath, description=description
+        db, worker_id=worker_id, filename=file.filename, filetype=filetype, filepath=filepath, description=description, doc_type=doc_type
     )
+    # قراءة النص من الملف وتحديث بيانات العامل
+    text = ocr.extract_text_from_file(filepath)
+    if text:
+        crud.workers.smart_update_worker_from_text(db, worker_id, text)
     return doc
 
 @router.get("/by_worker/{worker_id}", response_model=List[WorkerDocumentSchema])

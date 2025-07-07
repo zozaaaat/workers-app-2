@@ -8,6 +8,9 @@ def get_leave(db: Session, leave_id: int) -> Optional[models.Leave]:
 def get_leaves_by_worker(db: Session, worker_id: int, skip: int = 0, limit: int = 100) -> List[models.Leave]:
     return db.query(models.Leave).filter(models.Leave.worker_id == worker_id).offset(skip).limit(limit).all()
 
+def get_leaves(db, skip=0, limit=100):
+    return db.query(models.Leave).offset(skip).limit(limit).all()
+
 def create_leave(db: Session, leave: schemas.LeaveCreate) -> models.Leave:
     db_leave = models.Leave(
         worker_id=leave.worker_id,

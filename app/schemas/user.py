@@ -4,6 +4,7 @@ from typing import Optional
 class UserBase(BaseModel):
     username: str
     email: EmailStr
+    role: str = "employee"  # Add role to base schema
 
 class UserCreate(UserBase):
     password: str
@@ -20,3 +21,5 @@ class UserOut(UserBase):
         "from_attributes": True,
         "arbitrary_types_allowed": True,
     }
+    class Config:
+        orm_mode = True

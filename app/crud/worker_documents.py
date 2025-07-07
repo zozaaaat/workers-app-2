@@ -5,8 +5,8 @@ from typing import List, Optional
 def get_documents_by_worker(db: Session, worker_id: int) -> List[WorkerDocument]:
     return db.query(WorkerDocument).filter(WorkerDocument.worker_id == worker_id).all()
 
-def create_worker_document(db: Session, worker_id: int, filename: str, filetype: str, filepath: str, description: Optional[str] = None) -> WorkerDocument:
-    doc = WorkerDocument(worker_id=worker_id, filename=filename, filetype=filetype, filepath=filepath, description=description)
+def create_worker_document(db: Session, worker_id: int, filename: str, filetype: str, filepath: str, description: Optional[str] = None, doc_type: str = "other") -> WorkerDocument:
+    doc = WorkerDocument(worker_id=worker_id, filename=filename, filetype=filetype, filepath=filepath, description=description, doc_type=doc_type)
     db.add(doc)
     db.commit()
     db.refresh(doc)

@@ -8,6 +8,9 @@ def get_violation(db: Session, violation_id: int) -> Optional[models.Violation]:
 def get_violations_by_worker(db: Session, worker_id: int, skip: int = 0, limit: int = 100) -> List[models.Violation]:
     return db.query(models.Violation).filter(models.Violation.worker_id == worker_id).offset(skip).limit(limit).all()
 
+def get_violations(db: Session, skip: int = 0, limit: int = 100) -> List[models.Violation]:
+    return db.query(models.Violation).offset(skip).limit(limit).all()
+
 def create_violation(db: Session, violation: schemas.ViolationCreate) -> models.Violation:
     db_violation = models.Violation(
         worker_id=violation.worker_id,

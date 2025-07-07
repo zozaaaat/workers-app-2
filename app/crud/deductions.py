@@ -8,6 +8,9 @@ def get_deduction(db: Session, deduction_id: int) -> Optional[models.Deduction]:
 def get_deductions_by_worker(db: Session, worker_id: int, skip: int = 0, limit: int = 100) -> List[models.Deduction]:
     return db.query(models.Deduction).filter(models.Deduction.worker_id == worker_id).offset(skip).limit(limit).all()
 
+def get_deductions(db, skip=0, limit=100):
+    return db.query(models.Deduction).offset(skip).limit(limit).all()
+
 def create_deduction(db: Session, deduction: schemas.DeductionCreate) -> models.Deduction:
     db_deduction = models.Deduction(
         worker_id=deduction.worker_id,

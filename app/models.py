@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Date, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from .database import Base
 from .models_absence import Absence
+from app.models_worker_document import WorkerDocument
 
 # -----------------------------
 # شركة (Company)
@@ -22,6 +23,8 @@ class Company(Base):
     ownership_category = Column(String)
     total_workers = Column(Integer, default=0)
     total_licenses = Column(Integer, default=0)
+    email = Column(String, unique=True, index=True, nullable=True)  # بريد الشركة
+    phone = Column(String, nullable=True)  # رقم هاتف الشركة
 
     licenses = relationship("License", back_populates="company")
     workers = relationship("Worker", back_populates="company")
@@ -75,6 +78,8 @@ class Worker(Base):
     work_permit_start = Column(Date)
     work_permit_end = Column(Date)
     salary = Column(Float)
+    custom_id = Column(String, unique=True, index=True, nullable=True)  # معرف ذكي للعرض فقط
+    phone = Column(String, nullable=True)  # رقم هاتف العامل
 
     license_id = Column(Integer, ForeignKey("licenses.id"), nullable=True)
 
@@ -176,6 +181,7 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
+    role = Column(String, default="employee", nullable=False)  # Added role column
     is_active = Column(Integer, default=1)
 
     def __repr__(self):

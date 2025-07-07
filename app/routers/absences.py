@@ -5,7 +5,7 @@ from ..crud.absences import create_absence, get_absences, get_absence, delete_ab
 from ..database import get_db
 from typing import List
 
-router = APIRouter()
+router = APIRouter(tags=["Absences"])
 
 @router.post("/", response_model=AbsenceInDB)
 def create_absence_api(absence: AbsenceCreate, db: Session = Depends(get_db)):

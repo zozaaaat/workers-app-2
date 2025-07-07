@@ -14,6 +14,7 @@ class LicenseBase(BaseModel):
     license_number: Optional[str]
     address: Optional[str]
     company_id: Optional[int]
+    parent_id: Optional[int] = None  # <--- أضف هذا السطر
 
 class LicenseCreate(LicenseBase):
     name: str
@@ -27,6 +28,7 @@ class LicenseCreate(LicenseBase):
     license_number: str
     address: str
     company_id: int
+    parent_id: Optional[int] = None  # <--- أضف هذا السطر
 
 class LicenseUpdate(BaseModel):
     name: Optional[str] = None
@@ -40,16 +42,22 @@ class LicenseUpdate(BaseModel):
     license_number: Optional[str] = None
     address: Optional[str] = None
     company_id: Optional[int] = None
+    parent_id: Optional[int] = None
 
     model_config = {
         "from_attributes": True,
         "arbitrary_types_allowed": True,
     }
+    class Config:
+        orm_mode = True
 
 class License(LicenseBase):
     id: int
     company_id: int
+    parent_id: Optional[int] = None
 
     model_config = {
         "from_attributes": True
     }
+    class Config:
+        orm_mode = True

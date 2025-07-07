@@ -72,3 +72,6 @@ def get_sub_licenses(db: Session, main_id: int, skip: int = 0, limit: int = 100)
         .all()
     )
 
+def get_licenses(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.License).offset(skip).limit(limit).all()
+

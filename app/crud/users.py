@@ -10,9 +10,9 @@ def get_user_by_username(db: Session, username: str):
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
-def create_user(db: Session, username: str, email: str, password: str):
+def create_user(db: Session, username: str, email: str, password: str, role: str = "employee"):
     hashed_password = pwd_context.hash(password)
-    db_user = models.User(username=username, email=email, hashed_password=hashed_password)
+    db_user = models.User(username=username, email=email, hashed_password=hashed_password, role=role)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

@@ -6,6 +6,7 @@ class WorkerDocumentBase(BaseModel):
     filename: str
     filetype: str
     description: Optional[str] = None
+    doc_type: str
 
 class WorkerDocumentCreate(WorkerDocumentBase):
     pass

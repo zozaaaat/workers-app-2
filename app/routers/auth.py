@@ -18,7 +18,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="Username already registered")
     if crud.users.get_user_by_email(db, user.email):
         raise HTTPException(status_code=400, detail="Email already registered")
-    db_user = crud.users.create_user(db, user.username, user.email, user.password)
+    db_user = crud.users.create_user(db, user.username, user.email, user.password, user.role)
     return db_user
 
 @router.post("/login")
