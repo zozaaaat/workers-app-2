@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "@mui/x-data-grid": "^8.6.0"
-  },
-  "devDependencies": {
-    "@types/file-saver": "^2.0.7"
-  }
-}

@@ -16,6 +16,7 @@ class WorkerBase(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes = True
 
 class WorkerCreate(WorkerBase):
     civil_id: str
@@ -45,6 +46,7 @@ class WorkerUpdate(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes = True
 
 class Worker(WorkerBase):
     id: int
@@ -54,6 +56,7 @@ class Worker(WorkerBase):
 
     class Config:
         orm_mode = True
+        from_attributes = True
 
 class WorkerOut(BaseModel):
     id: int
@@ -63,3 +66,4 @@ class WorkerOut(BaseModel):
 
     class Config:
         orm_mode = True
+        from_attributes = True

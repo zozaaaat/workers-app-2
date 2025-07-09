@@ -112,13 +112,28 @@ def get_grouped_notifications(db: Session, user_id: int = None, days: int = 7):
         Notification.group_key,
         func.count(Notification.id).label("count"),
         func.max(Notification.created_at).label("last_created"),
-        func.array_agg(Notification.id).label("ids"),
-        func.array_agg(Notification.message).label("messages")
+        func.group_concat(Notification.id, ',').label("ids"),
+        func.group_concat(Notification.message, '|||').label("messages")
     ).filter(Notification.created_at >= time_limit)
     if user_id:
         query = query.filter(Notification.user_id == user_id)
     query = query.group_by(Notification.type, Notification.user_id, Notification.group_key)
-    return query.order_by(func.max(Notification.created_at).desc()).all()
+    results = query.order_by(func.max(Notification.created_at).desc()).all()
+    # تحويل النصوص المجمعة إلى قوائم
+    grouped = []
+    for row in results:
+        ids = [int(i) for i in row.ids.split(',')] if row.ids else []
+        messages = row.messages.split('|||') if row.messages else []
+        grouped.append({
+            'type': row.type,
+            'user_id': row.user_id,
+            'group_key': row.group_key,
+            'count': row.count,
+            'last_created': row.last_created,
+            'ids': ids,
+            'messages': messages
+        })
+    return grouped
 
 def send_notification_email(to_email: str, subject: str, body: str):
     msg = MIMEText(body, "html")

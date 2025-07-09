@@ -27,8 +27,8 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import InfoIcon from "@mui/icons-material/Info";
 import AddAlertIcon from "@mui/icons-material/AddAlert";
 import { useAuth } from "../context/AuthContext";
-import notificationSound from '../assets/notification.mp3'; // أضف ملف صوتي مناسب في assets
-import importantSound from '../assets/important.mp3'; // أضف ملف صوتي مميز للإشعارات المهمة
+import notificationSound from '../assets/notification.mp3';
+import importantSound from '../assets/important.mp3';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
@@ -68,7 +68,7 @@ const DashboardPage: React.FC = () => {
       setLoading(true);
       try {
         const [workers, companies, absences, leaves] = await Promise.all([
-          axios.get(`${API_URL}/workers`),
+          axios.get(`${API_URL}/workers/public`),
           axios.get(`${API_URL}/companies`),
           axios.get(`${API_URL}/absences`),
           axios.get(`${API_URL}/leaves`),
@@ -106,7 +106,7 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    axios.get(`${API_URL}/workers`).then(res => setAllWorkers(res.data));
+    axios.get(`${API_URL}/workers/public`).then(res => setAllWorkers(res.data));
     axios.get(`${API_URL}/companies`).then(res => setAllCompanies(res.data));
   }, []);
 
@@ -242,22 +242,46 @@ const DashboardPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const ws = new WebSocket('ws://localhost:8000/ws/notifications');
-    ws.onmessage = (event) => {
-      try {
-        const notif = JSON.parse(event.data);
-        setNotifications(prev => [notif, ...prev]);
-        if (notif.type === 'permit' || notif.type === 'passport' || notif.priority === 'high') {
-          setImportantNotif(notif);
-          const audio = new Audio(importantSound);
-          audio.play();
-        } else {
-          const audio = new Audio(notificationSound);
-          audio.play();
+    let ws: WebSocket | null = null;
+    let isUnmounted = false;
+    try {
+      ws = new WebSocket('ws://localhost:8000/ws/notifications');
+      ws.onopen = () => {
+        if (!isUnmounted) {
+          console.log('WebSocket connected');
         }
-      } catch (e) { /* تجاهل */ }
+      };
+      ws.onerror = (err) => {
+        if (!isUnmounted) {
+          console.error('WebSocket error:', err);
+        }
+      };
+      ws.onclose = (event) => {
+        if (!isUnmounted) {
+          console.warn('WebSocket closed:', event);
+        }
+      };
+      ws.onmessage = (event) => {
+        try {
+          const notif = JSON.parse(event.data);
+          setNotifications(prev => [notif, ...prev]);
+          if (notif.type === 'permit' || notif.type === 'passport' || notif.priority === 'high') {
+            setImportantNotif(notif);
+            const audio = new Audio(importantSound);
+            audio.play();
+          } else {
+            const audio = new Audio(notificationSound);
+            audio.play();
+          }
+        } catch (e) { /* تجاهل */ }
+      };
+    } catch (e) {
+      console.error('WebSocket connection failed:', e);
+    }
+    return () => {
+      isUnmounted = true;
+      if (ws) ws.close();
     };
-    return () => ws.close();
   }, []);
 
   const handleAction = async (notif: NotificationType, action: string) => {
@@ -462,7 +486,7 @@ const DashboardPage: React.FC = () => {
         </Card>
       </Box>
       <Dialog open={notifDialogOpen} onClose={() => setNotifDialogOpen(false)}>
-        <DialogTitle>إشعار جديد</DialogTitle>
+        <DialogTitle>{t('new_notification')}</DialogTitle>
         <DialogContent>
           {/* معاينة تفاعلية متكاملة */}
           <Box display="flex" flexDirection="column" alignItems="center" mb={2} mt={1}>
@@ -516,11 +540,11 @@ const DashboardPage: React.FC = () => {
               <InputLabel>إيموجي</InputLabel>
               <Select value={notifEmoji} label="إيموجي" onChange={e => setNotifEmoji(e.target.value)} disabled={!!notifIcon}>
                 <MenuItem value=""><em>بدون</em></MenuItem>
-                <MenuItem value="🎉" title="احتفال">🎉 احتفال</MenuItem>
-                <MenuItem value="⚠️" title="تحذير">⚠️ تحذير</MenuItem>
-                <MenuItem value="✅" title="تأكيد">✅ تأكيد</MenuItem>
-                <MenuItem value="📢" title="إعلان">📢 إعلان</MenuItem>
-                <MenuItem value="🔔" title="تنبيه">🔔 تنبيه</MenuItem>
+                <MenuItem value="🎉" title={t('celebration')}>🎉 {t('celebration')}</MenuItem>
+                <MenuItem value="⚠️" title={t('warning')}>⚠️ {t('warning')}</MenuItem>
+                <MenuItem value="✅" title={t('confirm')}>✅ {t('confirm')}</MenuItem>
+                <MenuItem value="📢" title={t('announcement')}>📢 {t('announcement')}</MenuItem>
+                <MenuItem value="🔔" title={t('notification')}>🔔 {t('notification')}</MenuItem>
               </Select>
             </FormControl>
             <TextField
@@ -583,9 +607,9 @@ const DashboardPage: React.FC = () => {
           <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel>نوع الإشعار</InputLabel>
             <Select value={notifType} label="نوع الإشعار" onChange={e => setNotifType(e.target.value)}>
-              <MenuItem value="general">عام</MenuItem>
-              <MenuItem value="permit">إقامة</MenuItem>
-              <MenuItem value="passport">جواز</MenuItem>
+              <MenuItem value="general">{t('general')}</MenuItem>
+              <MenuItem value="permit">{t('permit')}</MenuItem>
+              <MenuItem value="passport">{t('passport')}</MenuItem>
             </Select>
           </FormControl>
           <TextField fullWidth label="نص الإشعار" sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
@@ -606,8 +630,8 @@ const DashboardPage: React.FC = () => {
           {notifFile && <Typography variant="body2" color="primary">{notifFile.name}</Typography>}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setNotifDialogOpen(false)}>إلغاء</Button>
-          <Button onClick={handleSendNotif} variant="contained" disabled={notifTargets.length === 0 || !notifMessage}>إرسال</Button>
+          <Button onClick={() => setNotifDialogOpen(false)}>{t('cancel')}</Button>
+          <Button onClick={handleSendNotif} variant="contained" disabled={notifTargets.length === 0 || !notifMessage}>{t('send')}</Button>
         </DialogActions>
       </Dialog>
       <Dialog open={!!importantNotif} onClose={() => setImportantNotif(null)}>
@@ -617,7 +641,7 @@ const DashboardPage: React.FC = () => {
           <Typography variant="body2">{importantNotif?.created_at && new Date(importantNotif.created_at).toLocaleString()}</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setImportantNotif(null)}>إغلاق</Button>
+          <Button onClick={() => setImportantNotif(null)}>{t('close')}</Button>
         </DialogActions>
       </Dialog>
       <Snackbar open={snackbar.open} autoHideDuration={4000} onClose={() => setSnackbar({ ...snackbar, open: false })}>

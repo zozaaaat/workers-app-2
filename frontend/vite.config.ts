@@ -5,6 +5,35 @@ import { dirname, resolve } from 'node:path';
 
 export default defineConfig({
   plugins: [react()],
+  
+  // Performance optimizations
+  build: {
+    // Enable code splitting
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['@mui/material', '@mui/icons-material'],
+          query: ['@tanstack/react-query'],
+          charts: ['chart.js', 'react-chartjs-2'],
+        },
+      },
+    },
+    // Enable compression
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    // Optimize chunk size
+    chunkSizeWarningLimit: 500,
+    // Enable source maps in development only
+    sourcemap: process.env.NODE_ENV === 'development',
+  },
+
   server: {
     port: 5173,
     host: true,

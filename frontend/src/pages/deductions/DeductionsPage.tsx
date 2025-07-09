@@ -107,7 +107,7 @@ const DeductionsPage: React.FC = () => {
   return (
     <Box p={2}>
       <Typography variant="h5" mb={2}>{t("deductions")}</Typography>
-      {canEdit && <Button variant="contained" startIcon={<Delete />} sx={{ mb: 2 }} onClick={() => setAddOpen(true)}>{t("add_deduction")}</Button>}
+      {canEdit && <Button variant="contained" startIcon={<Delete />} sx={{ mb: 2 }} onClick={() => setAddOpen(true)}>{t('add_deduction')}</Button>}
       <Box display="flex" gap={2} mb={2} flexWrap="wrap">
         <TextField label={t("search_by_worker")} size="small" />
         <Typography variant="body2" sx={{ alignSelf: 'center' }}>{t("total_deductions")}: {totalDeductions}</Typography>

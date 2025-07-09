@@ -1,9 +1,12 @@
 from sqlalchemy.orm import Session
 from app import models, schemas
-from typing import Optional
+from typing import Optional, List
 
 def get_end_of_service(db: Session, record_id: int) -> Optional[models.EndOfService]:
     return db.query(models.EndOfService).filter(models.EndOfService.id == record_id).first()
+
+def get_end_of_services(db: Session, skip: int = 0, limit: int = 100) -> List[models.EndOfService]:
+    return db.query(models.EndOfService).offset(skip).limit(limit).all()
 
 def create_end_of_service(db: Session, eos: schemas.EndOfServiceCreate) -> models.EndOfService:
     db_eos = models.EndOfService(

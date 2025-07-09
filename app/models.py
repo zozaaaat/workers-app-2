@@ -3,6 +3,11 @@ from sqlalchemy.orm import relationship
 from .database import Base
 from .models_absence import Absence
 from app.models_worker_document import WorkerDocument
+from app.models_company_document import CompanyDocument
+from app.models_license_document import LicenseDocument, DocumentArchive
+
+# استيراد نماذج الأذونات والموافقات
+from .models_permissions import Permission, UserPermission, ApprovalRequest, ActivityLog
 
 # -----------------------------
 # شركة (Company)
@@ -28,6 +33,8 @@ class Company(Base):
 
     licenses = relationship("License", back_populates="company")
     workers = relationship("Worker", back_populates="company")
+    documents = relationship("CompanyDocument", back_populates="company")
+    archived_documents = relationship("DocumentArchive", back_populates="company")
 
     def __repr__(self):
         return f"<Company(name={self.file_name}, file_number={self.file_number})>"
@@ -57,6 +64,8 @@ class License(Base):
     company_id = Column(Integer, ForeignKey("companies.id"))
     company = relationship("Company", back_populates="licenses")
     workers = relationship("Worker", back_populates="license")
+    documents = relationship("LicenseDocument", back_populates="license")
+    archived_documents = relationship("DocumentArchive", back_populates="license")
 
     def __repr__(self):
         return f"<License(name={self.name}, number={self.license_number})>"
@@ -181,11 +190,21 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
     hashed_password = Column(String, nullable=False)
-    role = Column(String, default="employee", nullable=False)  # Added role column
+    role = Column(String, default="employee", nullable=False)  # admin, manager, employee
     is_active = Column(Integer, default=1)
+    full_name = Column(String, nullable=True)
+    department = Column(String, nullable=True)
+    created_at = Column(Date, nullable=True)
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+
+    # العلاقات
+    user_permissions = relationship("UserPermission", foreign_keys="UserPermission.user_id", back_populates="user")
+    approval_requests = relationship("ApprovalRequest", foreign_keys="ApprovalRequest.user_id", back_populates="user")
+    activity_logs = relationship("ActivityLog", back_populates="user")
+    created_by_user = relationship("User", remote_side=[id])
 
     def __repr__(self):
-        return f"<User(username={self.username}, email={self.email})>"
+        return f"<User(username={self.username}, email={self.email}, role={self.role})>"
 
 # -----------------------------
 # غياب (Absence)

@@ -9,3 +9,34 @@ email-validator
 python-jose[cryptography]
 passlib[bcrypt]
 python-dotenv
+pyotp
+qrcode[pil]
+pillow
+cryptography
+bcrypt
+pandas
+numpy
+scikit-learn
+joblib
+matplotlib
+seaborn
+
+# Performance optimization dependencies
+redis
+celery[redis]
+aioredis
+aiohttp
+psutil
+
+# متطلبات النظام الذكي لاستخراج المعلومات من المستندات
+pytesseract
+opencv-python
+PyPDF2
+pdf2image
+easyocr
+pdfplumber
+python-magic
+Wand
+poppler-utils
+websocket-client
+reportlab

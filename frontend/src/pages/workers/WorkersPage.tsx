@@ -7,11 +7,12 @@ import { API_URL } from '../../api';
 import CircularProgress from "@mui/material/CircularProgress";
 import { Box, Button, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert, Select, MenuItem, InputLabel, FormControl } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
-import { addNotification, fetchNotifications, updateNotificationAction } from "../../api_notifications";
+import { addNotification, updateNotificationAction } from "../../api_notifications";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import DescriptionIcon from "@mui/icons-material/Description";
 import InfoIcon from "@mui/icons-material/Info";
 import AddAlertIcon from "@mui/icons-material/AddAlert";
+import { useNavigate } from "react-router-dom";
 
 const WorkersPage: React.FC = () => {
   const { t } = useTranslation();
@@ -48,7 +49,6 @@ const WorkersPage: React.FC = () => {
   const [notify, setNotify] = useState<string | null>(null);
   const [workerNotifications, setWorkerNotifications] = useState<any[]>([]);
   const [notifDialogOpen, setNotifDialogOpen] = useState(false);
-  const [selectedWorker, setSelectedWorker] = useState<any>(null);
   const [addNotifDialogOpen, setAddNotifDialogOpen] = useState(false);
   const [notifType, setNotifType] = useState("general");
   const [notifMessage, setNotifMessage] = useState("");
@@ -60,6 +60,7 @@ const WorkersPage: React.FC = () => {
   const [notifFile, setNotifFile] = useState<File | null>(null);
   const [notifSchedule, setNotifSchedule] = useState("");
   const [notifActionRequired, setNotifActionRequired] = useState("");
+  const navigate = useNavigate();
   // تحديث الأعمدة لتمرير params: any
   const columns: GridColDef[] = [
     { field: "custom_id", headerName: t("worker_id"), width: 100 },
@@ -95,7 +96,7 @@ const WorkersPage: React.FC = () => {
   const canEdit = user?.role === "admin" || user?.role === "manager";
   useEffect(() => {
     setLoading(true);
-    axios.get(`${API_URL}/workers`)
+    axios.get(`${API_URL}/workers/public`)
       .then(res => {
         const data = res.data.map((row: any, idx: number) => ({
           ...row,
@@ -263,13 +264,8 @@ const WorkersPage: React.FC = () => {
     const nameMatch = !searchName || row.name?.toLowerCase().includes(searchName.toLowerCase());
     return companyMatch && licenseMatch && nameMatch;
   });
-  const handleRowClick = async (params: any) => {
-    setSelectedWorker(params.row);
-    // جلب إشعارات العامل من كل الإشعارات (حسب الاسم أو id)
-    const allNotifs = await fetchNotifications();
-    const workerNotifs = allNotifs.filter((n: any) => n.message.includes(params.row.name) || n.message.includes(params.row.civil_id));
-    setWorkerNotifications(workerNotifs);
-    setNotifDialogOpen(true);
+  const handleRowClick = (params: any) => {
+    navigate(`/workers/${params.row.id}`);
   };
   const handleSendWorkerNotif = async () => {
     if (!notifTargetWorker) return;
@@ -473,7 +469,7 @@ const WorkersPage: React.FC = () => {
           </DialogActions>
         </Dialog>
         <Dialog open={notifDialogOpen} onClose={() => setNotifDialogOpen(false)}>
-          <DialogTitle>إشعارات العامل {selectedWorker?.name}</DialogTitle>
+          <DialogTitle>إشعارات العامل {notifTargetWorker?.name}</DialogTitle>
           <DialogContent>
             {workerNotifications.length === 0 ? (
               <Typography>لا يوجد إشعارات لهذا العامل</Typography>
@@ -499,8 +495,8 @@ const WorkersPage: React.FC = () => {
                     <Box display="inline-flex" gap={1} ml={1}>
                       {n.action_status === "pending" || !n.action_status ? (
                         <>
-                          <Button size="small" color="success" variant="outlined" onClick={() => handleAction(n, "confirmed")}>تأكيد</Button>
-                          <Button size="small" color="error" variant="outlined" onClick={() => handleAction(n, "rejected")}>رفض</Button>
+                          <Button size="small" color="success" variant="outlined" onClick={() => handleAction(n, "confirmed")}>{t('confirm')}</Button>
+                          <Button size="small" color="error" variant="outlined" onClick={() => handleAction(n, "rejected")}>{t('reject')}</Button>
                         </>
                       ) : (
                         <Typography variant="body2" color={n.action_status === "confirmed" ? "success.main" : "error.main"}>
@@ -514,13 +510,13 @@ const WorkersPage: React.FC = () => {
             )}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setNotifDialogOpen(false)}>إغلاق</Button>
+            <Button onClick={() => setNotifDialogOpen(false)}>{t('close')}</Button>
           </DialogActions>
         </Dialog>
         <Dialog open={addNotifDialogOpen} onClose={() => setAddNotifDialogOpen(false)}>
-          <DialogTitle>إشعار جديد للعامل</DialogTitle>
+          <DialogTitle>{t('new_worker_notification')}</DialogTitle>
           <DialogContent>
-            <Typography>العامل: {notifTargetWorker?.name}</Typography>
+            <Typography>{t('worker')}: {notifTargetWorker?.name}</Typography>
             {/* معاينة مباشرة */}
             <Box display="flex" flexDirection="column" alignItems="center" mb={2} mt={1}>
               <Box sx={{ width: 56, height: 56, borderRadius: '50%', background: notifColor || '#e3e3e3', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, boxShadow: '0 2px 8px #0001', mb: 1 }}>
@@ -529,20 +525,20 @@ const WorkersPage: React.FC = () => {
               <Typography variant="caption" color="text.secondary">معاينة شكل الإشعار</Typography>
             </Box>
             <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>نوع الإشعار</InputLabel>
-              <Select value={notifType} label="نوع الإشعار" onChange={e => setNotifType(e.target.value)}>
-                <MenuItem value="general">عام</MenuItem>
-                <MenuItem value="permit">إقامة</MenuItem>
-                <MenuItem value="passport">جواز</MenuItem>
+              <InputLabel>{t('notification_type')}</InputLabel>
+              <Select value={notifType} label={t('notification_type')} onChange={e => setNotifType(e.target.value)}>
+                <MenuItem value="general">{t('general')}</MenuItem>
+                <MenuItem value="permit">{t('permit')}</MenuItem>
+                <MenuItem value="passport">{t('passport')}</MenuItem>
               </Select>
             </FormControl>
-            <TextField fullWidth label="نص الإشعار" sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
-            <TextField fullWidth label="تاريخ انتهاء الإشعار (اختياري)" sx={{ mt: 2 }} type="date" InputLabelProps={{ shrink: true }} value={notifDate} onChange={e => setNotifDate(e.target.value)} />
-            <TextField fullWidth label="جدولة الإشعار (اختياري)" type="datetime-local" sx={{ mt: 2 }} InputLabelProps={{ shrink: true }} value={notifSchedule} onChange={e => setNotifSchedule(e.target.value)} />
+            <TextField fullWidth label={t('notification_text')} sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
+            <TextField fullWidth label={t('notification_expiry') + ' (' + t('optional') + ')'} sx={{ mt: 2 }} type="date" InputLabelProps={{ shrink: true }} value={notifDate} onChange={e => setNotifDate(e.target.value)} />
+            <TextField fullWidth label={t('notification_schedule') + ' (' + t('optional') + ')'} type="datetime-local" sx={{ mt: 2 }} InputLabelProps={{ shrink: true }} value={notifSchedule} onChange={e => setNotifSchedule(e.target.value)} />
             <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>رمز (اختياري)</InputLabel>
-              <Select value={notifIcon} label="رمز (اختياري)" onChange={e => setNotifIcon(e.target.value)} disabled={!!notifEmoji}>
-                <MenuItem value=""><em>بدون</em></MenuItem>
+              <InputLabel>{t('icon') + ' (' + t('optional') + ')'}</InputLabel>
+              <Select value={notifIcon} label={t('icon') + ' (' + t('optional') + ')'} onChange={e => setNotifIcon(e.target.value)} disabled={!!notifEmoji}>
+                <MenuItem value=""><em>{t('none')}</em></MenuItem>
                 <MenuItem value="info"><InfoIcon /> Info</MenuItem>
                 <MenuItem value="assignment"><AssignmentIndIcon /> Assignment</MenuItem>
                 <MenuItem value="description"><DescriptionIcon /> Description</MenuItem>
@@ -550,58 +546,58 @@ const WorkersPage: React.FC = () => {
               </Select>
             </FormControl>
             <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>لون (اختياري)</InputLabel>
-              <Select value={notifColor} label="لون (اختياري)" onChange={e => setNotifColor(e.target.value)}>
-                <MenuItem value=""><em>افتراضي</em></MenuItem>
-                <MenuItem value="#1976d2"><span style={{ background: '#1976d2', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> أزرق</MenuItem>
-                <MenuItem value="#43a047"><span style={{ background: '#43a047', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> أخضر</MenuItem>
-                <MenuItem value="#fbc02d"><span style={{ background: '#fbc02d', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> أصفر</MenuItem>
-                <MenuItem value="#e53935"><span style={{ background: '#e53935', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> أحمر</MenuItem>
+              <InputLabel>{t('color') + ' (' + t('optional') + ')'}</InputLabel>
+              <Select value={notifColor} label={t('color') + ' (' + t('optional') + ')'} onChange={e => setNotifColor(e.target.value)}>
+                <MenuItem value=""><em>{t('default')}</em></MenuItem>
+                <MenuItem value="#1976d2"><span style={{ background: '#1976d2', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> {t('blue')}</MenuItem>
+                <MenuItem value="#43a047"><span style={{ background: '#43a047', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> {t('green')}</MenuItem>
+                <MenuItem value="#fbc02d"><span style={{ background: '#fbc02d', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> {t('yellow')}</MenuItem>
+                <MenuItem value="#e53935"><span style={{ background: '#e53935', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> {t('red')}</MenuItem>
               </Select>
             </FormControl>
             <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>إيموجي (اختياري)</InputLabel>
-              <Select value={notifEmoji} label="إيموجي (اختياري)" onChange={e => setNotifEmoji(e.target.value)} disabled={!!notifIcon}>
-                <MenuItem value=""><em>بدون</em></MenuItem>
-                <MenuItem value="🎉">🎉 احتفال</MenuItem>
-                <MenuItem value="⚠️">⚠️ تحذير</MenuItem>
-                <MenuItem value="✅">✅ تأكيد</MenuItem>
-                <MenuItem value="📢">📢 إعلان</MenuItem>
-                <MenuItem value="🔔">🔔 تنبيه</MenuItem>
+              <InputLabel>{t('emoji') + ' (' + t('optional') + ')'}</InputLabel>
+              <Select value={notifEmoji} label={t('emoji') + ' (' + t('optional') + ')'} onChange={e => setNotifEmoji(e.target.value)} disabled={!!notifIcon}>
+                <MenuItem value=""><em>{t('none')}</em></MenuItem>
+                <MenuItem value="🎉">🎉 {t('celebration')}</MenuItem>
+                <MenuItem value="⚠️">⚠️ {t('warning')}</MenuItem>
+                <MenuItem value="✅">✅ {t('confirm')}</MenuItem>
+                <MenuItem value="📢">📢 {t('announcement')}</MenuItem>
+                <MenuItem value="🔔">🔔 {t('notification')}</MenuItem>
               </Select>
             </FormControl>
-            <TextField label="إيموجي مخصص" value={notifEmoji} onChange={e => setNotifEmoji(e.target.value)} inputProps={{ maxLength: 2, style: { fontSize: 24, textAlign: 'center' } }} sx={{ width: 80, mt: 2 }} disabled={!!notifIcon} placeholder="😊" />
+            <TextField label={t('custom_emoji')} value={notifEmoji} onChange={e => setNotifEmoji(e.target.value)} inputProps={{ maxLength: 2, style: { fontSize: 24, textAlign: 'center' } }} sx={{ width: 80, mt: 2 }} disabled={!!notifIcon} placeholder="😊" />
             <Box display="flex" alignItems="center" gap={1} mt={2}>
               <FormControl sx={{ minWidth: 100 }}>
-                <InputLabel>لون مخصص</InputLabel>
-                <Select value={notifColor} label="لون مخصص" onChange={e => setNotifColor(e.target.value)}>
-                  <MenuItem value=""><em>افتراضي</em></MenuItem>
-                  <MenuItem value="#1976d2"><span style={{ background: '#1976d2', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> أزرق</MenuItem>
-                  <MenuItem value="#43a047"><span style={{ background: '#43a047', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> أخضر</MenuItem>
-                  <MenuItem value="#fbc02d"><span style={{ background: '#fbc02d', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> أصفر</MenuItem>
-                  <MenuItem value="#e53935"><span style={{ background: '#e53935', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> أحمر</MenuItem>
+                <InputLabel>{t('custom_color')}</InputLabel>
+                <Select value={notifColor} label={t('custom_color')} onChange={e => setNotifColor(e.target.value)}>
+                  <MenuItem value=""><em>{t('default')}</em></MenuItem>
+                  <MenuItem value="#1976d2"><span style={{ background: '#1976d2', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> {t('blue')}</MenuItem>
+                  <MenuItem value="#43a047"><span style={{ background: '#43a047', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> {t('green')}</MenuItem>
+                  <MenuItem value="#fbc02d"><span style={{ background: '#fbc02d', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> {t('yellow')}</MenuItem>
+                  <MenuItem value="#e53935"><span style={{ background: '#e53935', width: 20, height: 20, display: 'inline-block', borderRadius: 4, marginRight: 8 }} /> {t('red')}</MenuItem>
                 </Select>
               </FormControl>
               <input type="color" value={notifColor || '#e3e3e3'} onChange={e => setNotifColor(e.target.value)} style={{ width: 36, height: 36, border: 'none', background: 'none', cursor: 'pointer', borderRadius: 8 }} title="اختر لون مخصص" />
             </Box>
             <FormControl fullWidth sx={{ mt: 2 }}>
-              <InputLabel>إجراء تفاعلي (اختياري)</InputLabel>
-              <Select value={notifActionRequired} label="إجراء تفاعلي (اختياري)" onChange={e => setNotifActionRequired(e.target.value)}>
-                <MenuItem value=""><em>بدون</em></MenuItem>
-                <MenuItem value="confirm">تأكيد</MenuItem>
-                <MenuItem value="approve">موافقة</MenuItem>
-                <MenuItem value="reject">رفض</MenuItem>
+              <InputLabel>{t('action_required') + ' (' + t('optional') + ')'}</InputLabel>
+              <Select value={notifActionRequired} label={t('action_required') + ' (' + t('optional') + ')'} onChange={e => setNotifActionRequired(e.target.value)}>
+                <MenuItem value=""><em>{t('none')}</em></MenuItem>
+                <MenuItem value="confirm">{t('confirm')}</MenuItem>
+                <MenuItem value="approve">{t('approve')}</MenuItem>
+                <MenuItem value="reject">{t('reject')}</MenuItem>
               </Select>
             </FormControl>
             <Button variant="outlined" component="label" sx={{ mt: 2 }}>
-              إرفاق ملف (اختياري)
+              {t('attach_file')} ({t('optional')})
               <input type="file" hidden onChange={e => setNotifFile(e.target.files?.[0] || null)} />
             </Button>
             {notifFile && <Typography variant="body2" color="primary">{notifFile.name}</Typography>}
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setAddNotifDialogOpen(false)}>إلغاء</Button>
-            <Button onClick={handleSendWorkerNotif} variant="contained" disabled={!notifMessage}>إرسال</Button>
+            <Button onClick={() => setAddNotifDialogOpen(false)}>{t('cancel')}</Button>
+            <Button onClick={handleSendWorkerNotif} variant="contained" disabled={!notifMessage}>{t('send')}</Button>
           </DialogActions>
         </Dialog>
         <Snackbar open={!!success} autoHideDuration={4000} onClose={() => setSuccess("")}>

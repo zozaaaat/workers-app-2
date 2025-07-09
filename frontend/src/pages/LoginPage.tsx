@@ -17,10 +17,14 @@ const LoginPage: React.FC = () => {
     e.preventDefault();
     setError("");
     try {
-      const loginRes = await axios.post(`${API_URL}/auth/login`, new URLSearchParams({
-        username,
-        password
-      }));
+      const loginRes = await axios.post(
+        `${API_URL}/auth/login`,
+        new URLSearchParams({
+          username,
+          password
+        }),
+        { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
+      );
       if (!loginRes.data || !loginRes.data.access_token) {
         setError("اسم المستخدم أو كلمة المرور غير صحيحة");
         return;

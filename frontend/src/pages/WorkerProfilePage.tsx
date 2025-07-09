@@ -8,6 +8,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MenuItem from '@mui/material/MenuItem';
+import WorkerNotifications from "../components/WorkerNotifications";
 
 const WorkerProfilePage: React.FC = () => {
   const { t } = useTranslation();
@@ -83,6 +84,8 @@ const WorkerProfilePage: React.FC = () => {
           <Typography variant="subtitle1" color="textSecondary">{t("worker_id")}: <b style={{ color: '#1976d2', fontSize: 18 }}>{worker.custom_id || worker.id}</b></Typography>
         </Box>
       </Box>
+      {/* إشعارات العامل */}
+      <WorkerNotifications worker={worker} />
       <Card>
         <CardContent>
           <Table>

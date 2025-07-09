@@ -6,6 +6,7 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddAlertIcon from "@mui/icons-material/AddAlert";
+import FolderIcon from "@mui/icons-material/Folder";
 import axios from "axios";
 import { useTranslation } from 'react-i18next';
 import { API_URL } from '../../api';
@@ -14,6 +15,7 @@ import { addNotification, updateNotificationAction } from "../../api_notificatio
 import InfoIcon from '@mui/icons-material/Info';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import DescriptionIcon from '@mui/icons-material/Description';
+import CompanyDocuments from '../../components/CompanyDocuments';
 
 interface Company {
   id?: number;
@@ -67,6 +69,8 @@ const CompaniesPage: React.FC = () => {
   const [companyNotifications, setCompanyNotifications] = useState<any[]>([]);
   const [notifListDialogOpen, setNotifListDialogOpen] = useState(false);
   const [selectedNotifCompany, setSelectedNotifCompany] = useState<Company | null>(null);
+  const [documentsDialogOpen, setDocumentsDialogOpen] = useState(false);
+  const [selectedDocumentCompany, setSelectedDocumentCompany] = useState<Company | null>(null);
 
   const token = localStorage.getItem("token");
   const api = axios.create({
@@ -304,6 +308,18 @@ const CompaniesPage: React.FC = () => {
                           <Button variant="outlined" size="small" sx={{ mx: 1 }} onClick={() => { setSelectedNotifCompany(company); setNotifListDialogOpen(true); }}>
                             عرض الإشعارات
                           </Button>
+                          <Button 
+                            variant="outlined" 
+                            size="small" 
+                            sx={{ mx: 1 }} 
+                            onClick={() => { 
+                              setSelectedDocumentCompany(company); 
+                              setDocumentsDialogOpen(true); 
+                            }} 
+                            startIcon={<FolderIcon />}
+                          >
+                            المستندات
+                          </Button>
                         </>
                       )}
                     </TableCell>
@@ -393,7 +409,7 @@ const CompaniesPage: React.FC = () => {
       </Drawer>
       {/* Dialog لإشعار الشركة */}
       <Dialog open={notifDialogOpen} onClose={() => setNotifDialogOpen(false)}>
-        <DialogTitle>إشعار جديد للشركة</DialogTitle>
+        <DialogTitle>{t('new_company_notification')}</DialogTitle>
         <DialogContent>
           <Typography>الشركة: {notifTargetCompany?.file_name || notifTargetCompany?.file_number}</Typography>
           {/* معاينة مباشرة */}
@@ -406,9 +422,9 @@ const CompaniesPage: React.FC = () => {
           <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel>نوع الإشعار</InputLabel>
             <Select value={notifType} label="نوع الإشعار" onChange={e => setNotifType(e.target.value)}>
-              <MenuItem value="general">عام</MenuItem>
-              <MenuItem value="permit">إقامة</MenuItem>
-              <MenuItem value="passport">جواز</MenuItem>
+              <MenuItem value="general">{t('general')}</MenuItem>
+              <MenuItem value="permit">{t('permit')}</MenuItem>
+              <MenuItem value="passport">{t('passport')}</MenuItem>
             </Select>
           </FormControl>
           <TextField fullWidth label="نص الإشعار" sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
@@ -438,11 +454,11 @@ const CompaniesPage: React.FC = () => {
             <InputLabel>إيموجي (اختياري)</InputLabel>
             <Select value={notifEmoji} label="إيموجي (اختياري)" onChange={e => setNotifEmoji(e.target.value)} disabled={!!notifIcon}>
               <MenuItem value=""><em>بدون</em></MenuItem>
-              <MenuItem value="🎉">🎉 احتفال</MenuItem>
-              <MenuItem value="⚠️">⚠️ تحذير</MenuItem>
-              <MenuItem value="✅">✅ تأكيد</MenuItem>
-              <MenuItem value="📢">📢 إعلان</MenuItem>
-              <MenuItem value="🔔">🔔 تنبيه</MenuItem>
+              <MenuItem value="🎉">🎉 {t('celebration')}</MenuItem>
+              <MenuItem value="⚠️">⚠️ {t('warning')}</MenuItem>
+              <MenuItem value="✅">✅ {t('confirm')}</MenuItem>
+              <MenuItem value="📢">📢 {t('announcement')}</MenuItem>
+              <MenuItem value="🔔">🔔 {t('notification')}</MenuItem>
             </Select>
           </FormControl>
           <TextField label="إيموجي مخصص" value={notifEmoji} onChange={e => setNotifEmoji(e.target.value)} inputProps={{ maxLength: 2, style: { fontSize: 24, textAlign: 'center' } }} sx={{ width: 80, mt: 2 }} disabled={!!notifIcon} placeholder="😊" />
@@ -463,9 +479,9 @@ const CompaniesPage: React.FC = () => {
             <InputLabel>إجراء تفاعلي (اختياري)</InputLabel>
             <Select value={notifActionRequired} label="إجراء تفاعلي (اختياري)" onChange={e => setNotifActionRequired(e.target.value)}>
               <MenuItem value=""><em>بدون</em></MenuItem>
-              <MenuItem value="confirm">تأكيد</MenuItem>
-              <MenuItem value="approve">موافقة</MenuItem>
-              <MenuItem value="reject">رفض</MenuItem>
+              <MenuItem value="confirm">{t('confirm')}</MenuItem>
+              <MenuItem value="approve">{t('approve')}</MenuItem>
+              <MenuItem value="reject">{t('reject')}</MenuItem>
             </Select>
           </FormControl>
           <Button variant="outlined" component="label" sx={{ mt: 2 }}>
@@ -475,8 +491,8 @@ const CompaniesPage: React.FC = () => {
           {notifFile && <Typography variant="body2" color="primary">{notifFile.name}</Typography>}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setNotifDialogOpen(false)}>إلغاء</Button>
-          <Button onClick={handleSendCompanyNotif} variant="contained" disabled={!notifMessage}>إرسال</Button>
+          <Button onClick={() => setNotifDialogOpen(false)}>{t('cancel')}</Button>
+          <Button onClick={handleSendCompanyNotif} variant="contained" disabled={!notifMessage}>{t('send')}</Button>
         </DialogActions>
       </Dialog>
       {/* نافذة عرض إشعارات الشركة */}
@@ -523,7 +539,7 @@ const CompaniesPage: React.FC = () => {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setNotifListDialogOpen(false)}>إغلاق</Button>
+          <Button onClick={() => setNotifListDialogOpen(false)}>{t('close')}</Button>
         </DialogActions>
       </Dialog>
       {/* Snackbar */}
@@ -533,6 +549,22 @@ const CompaniesPage: React.FC = () => {
       <Snackbar open={!!success} autoHideDuration={4000} onClose={() => setSuccess("")}>
         <Alert severity="success">{success}</Alert>
       </Snackbar>
+
+      {/* نافذة إدارة المستندات */}
+      {selectedDocumentCompany && (
+        <CompanyDocuments
+          company={{
+            id: selectedDocumentCompany.id!,
+            file_name: selectedDocumentCompany.file_name || '',
+            file_number: selectedDocumentCompany.file_number
+          }}
+          open={documentsDialogOpen}
+          onClose={() => {
+            setDocumentsDialogOpen(false);
+            setSelectedDocumentCompany(null);
+          }}
+        />
+      )}
     </Box>
   );
 };

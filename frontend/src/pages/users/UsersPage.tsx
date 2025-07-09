@@ -153,7 +153,7 @@ const UsersPage: React.FC = () => {
           </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>{t('cancel')}</Button>
+          <Button onClick={() => setOpen(false)}>{t('cancel')}</Button>
           <Button onClick={handleSave} variant="contained">{t('save')}</Button>
         </DialogActions>
       </Dialog>

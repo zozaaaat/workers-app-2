@@ -1,41 +1,0 @@
-﻿
-
-StatusCode        : 200
-StatusDescription : OK
-Content           : [{"civil_id":"282122302
-                    072","name":"Ø¹Ø¨Ø¯Ø§Ù
-                    Ø¹Ø²ÙØ² Ø§ØÙØ¯ ÙØ§Ø¯
-                    Ø±Ù","nationality":"Øº
-                    ÙØ± ÙØØ¯Ø¯","worker_t
-                    ype":"Ø¹ÙØ§ÙØ© ÙØ§Ù
-                    Ø¯Ø©","job_title":"Ø¹Ø§
-                    ÙÙ","hire_date":null,
-                    "work_permit_s...
-RawContent        : HTTP/1.1 200 OK
-                    Content-Length: 19564
-                    Content-Type: 
-                    application/json
-                    Date: Mon, 07 Jul 2025 
-                    13:04:37 GMT
-                    Server: uvicorn
-                    
-                    [{"civil_id":"282122302
-                    072","name":"Ø¹Ø¨Ø¯Ø§Ù
-                    Ø¹Ø²ÙØ² Ø§ØÙØ¯ 
-                    ÙØ§Ø¯Ø±...
-Forms             : {}
-Headers           : {[Content-Length, 
-                    19564], [Content-Type, 
-                    application/json], 
-                    [Date, Mon, 07 Jul 
-                    2025 13:04:37 GMT], 
-                    [Server, uvicorn]}
-Images            : {}
-InputFields       : {}
-Links             : {}
-ParsedHtml        : mshtml.HTMLDocumentClas
-                    s
-RawContentLength  : 19564
-
-
-
