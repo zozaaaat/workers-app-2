@@ -193,7 +193,7 @@ const LeavesPageSimplified: React.FC = () => {
       label: 'المدة',
       width: 100,
       align: 'center',
-      render: (value, row) => {
+      render: (_value, row) => {
         const duration = calculateDuration(row.start_date, row.end_date);
         return (
           <Chip 
