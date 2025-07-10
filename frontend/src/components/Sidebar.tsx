@@ -11,6 +11,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import AssignmentIndIcon from '@mui/icons-material/AssignmentInd';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
+import AssessmentIcon from '@mui/icons-material/Assessment';
 import SecurityIcon from '@mui/icons-material/Security';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import PeopleIcon from '@mui/icons-material/People';
@@ -65,6 +66,11 @@ const Sidebar: React.FC = () => {
         <ListItem component={Link} to="/ai-analytics" sx={location.pathname === "/ai-analytics" ? { backgroundColor: '#ffffff22', fontWeight: 'bold', borderRadius: 2, transition: 'background 0.3s', color: '#fff' } : { borderRadius: 2, transition: 'background 0.3s', color: '#fff' }}>
           <ListItemIcon sx={{ color: '#fff' }}><PsychologyIcon /></ListItemIcon>
           <ListItemText primary="الذكاء الاصطناعي" primaryTypographyProps={{ style: { color: '#fff' } }} />
+        </ListItem>
+        
+        <ListItem component={Link} to="/advanced-reports" sx={location.pathname === "/advanced-reports" ? { backgroundColor: '#ffffff22', fontWeight: 'bold', borderRadius: 2, transition: 'background 0.3s', color: '#fff' } : { borderRadius: 2, transition: 'background 0.3s', color: '#fff' }}>
+          <ListItemIcon sx={{ color: '#fff' }}><AssessmentIcon /></ListItemIcon>
+          <ListItemText primary="التقارير المتقدمة" primaryTypographyProps={{ style: { color: '#fff' } }} />
         </ListItem>
         
         {user?.role === "admin" && (

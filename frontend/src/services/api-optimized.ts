@@ -69,7 +69,7 @@ export const useDashboardStats = () => {
       return data.data;
     },
     staleTime: 5 * 60 * 1000, // 5 دقائق
-    cacheTime: 10 * 60 * 1000, // 10 دقائق
+    gcTime: 10 * 60 * 1000, // 10 دقائق (بدلاً من cacheTime)
     refetchOnWindowFocus: false,
   });
 };
@@ -118,7 +118,7 @@ export const useWorkersOptimized = (
       return data.data;
     },
     staleTime: 30 * 1000, // 30 ثانية
-    keepPreviousData: true, // الاحتفاظ بالبيانات السابقة أثناء التحميل
+    placeholderData: (previousData) => previousData, // الاحتفاظ بالبيانات السابقة أثناء التحميل
   });
 };
 
@@ -131,7 +131,7 @@ export const useCompanies = (skip: number = 0, limit: number = 20) => {
       return data;
     },
     staleTime: 5 * 60 * 1000,
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
   });
 };
 
@@ -236,7 +236,7 @@ export const usePerformanceInfo = () => {
     },
     staleTime: 30 * 1000, // 30 ثانية
     refetchInterval: 60 * 1000, // تحديث كل دقيقة
-    enabled: process.env.NODE_ENV === 'development', // فقط في بيئة التطوير
+    enabled: import.meta.env.DEV, // فقط في بيئة التطوير
   });
 };
 
@@ -245,7 +245,7 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 دقائق افتراضي
-      cacheTime: 10 * 60 * 1000, // 10 دقائق افتراضي
+      gcTime: 10 * 60 * 1000, // 10 دقائق افتراضي (بدلاً من cacheTime)
       retry: (failureCount: number, error: any) => {
         // عدم إعادة المحاولة للأخطاء 4xx
         if (error?.response?.status >= 400 && error?.response?.status < 500) {

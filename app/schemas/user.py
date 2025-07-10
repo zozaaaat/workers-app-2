@@ -21,5 +21,3 @@ class UserOut(UserBase):
         "from_attributes": True,
         "arbitrary_types_allowed": True,
     }
-    class Config:
-        orm_mode = True

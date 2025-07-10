@@ -1,192 +1,84 @@
-import React, { useEffect, useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Box, Typography, Card, CardContent, CircularProgress, Divider, Button, Avatar, Table, TableBody, TableCell, TableRow, FormControl, Select, Checkbox } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import { API_URL } from "../api";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import DownloadIcon from '@mui/icons-material/Download';
-import DeleteIcon from '@mui/icons-material/Delete';
-import MenuItem from '@mui/material/MenuItem';
-import WorkerNotifications from "../components/WorkerNotifications";
 
 const WorkerProfilePage: React.FC = () => {
-  const { t } = useTranslation();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [worker, setWorker] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [documents, setDocuments] = useState<any[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-  const [fileError, setFileError] = useState("");
-  const [docType, setDocType] = useState('passport');
-  const [selectedDocs, setSelectedDocs] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!id) return;
+    
+    // جلب بيانات العامل
     setLoading(true);
-    axios.get(`${API_URL}/workers/${id}`)
-      .then(res => setWorker(res.data))
+    axios.get(`${API_URL}/workers/api/worker/${id}`)
+      .then(res => {
+        if (res.data.error) {
+          setError(res.data.error);
+        } else {
+          setWorker(res.data);
+        }
+      })
+      .catch(() => setError("خطأ في جلب بيانات العامل"))
       .finally(() => setLoading(false));
+    
+    // جلب مستندات العامل
+    axios.get(`${API_URL}/worker_documents/api/docs/${id}`)
+      .then(res => {
+        if (res.data.error) {
+          console.log("Documents error:", res.data.error);
+          setDocuments([]);
+        } else {
+          setDocuments(res.data);
+        }
+      })
+      .catch(err => {
+        console.log("Documents fetch error:", err);
+        setDocuments([]);
+      });
   }, [id]);
 
-  // جلب مستندات العامل
-  useEffect(() => {
-    if (!id) return;
-    axios.get(`${API_URL}/worker_documents/by_worker/${id}`)
-      .then(res => setDocuments(res.data));
-  }, [id, uploading]);
-
-  const showField = (val: any) => val ? val : <span style={{ color: '#aaa' }}>{t('not_available') || 'غير متوفر'}</span>;
-
-  // رفع ملف جديد
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      setFileError("");
-    }
-  };
-  const handleUpload = async () => {
-    if (!file) { setFileError("يرجى اختيار ملف"); return; }
-    setUploading(true);
-    const formData = new FormData();
-    formData.append("worker_id", id!);
-    formData.append("file", file);
-    formData.append("doc_type", docType);
-    try {
-      await axios.post(`${API_URL}/worker_documents/upload`, formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-      setFile(null);
-      setFileError("");
-    } catch {
-      setFileError("فشل رفع الملف");
-    }
-    setUploading(false);
-  };
-  const handleDeleteDoc = async (docId: number) => {
-    await axios.delete(`${API_URL}/worker_documents/${docId}`);
-    setDocuments(docs => docs.filter(d => d.id !== docId));
-  };
-  const handleDownload = (filepath: string) => {
-    window.open(`${API_URL}/static/${filepath}`, '_blank');
-  };
-
-  if (loading) return <Box display="flex" justifyContent="center" alignItems="center" minHeight={300}><CircularProgress /></Box>;
-  if (!worker) return <Typography color="error">{t("worker_not_found")}</Typography>;
+  if (loading) return <div>جاري التحميل...</div>;
+  if (error) return <div>خطأ: {error}</div>;
+  if (!worker) return <div>العامل غير موجود</div>;
 
   return (
-    <Box p={2}>
-      <Box display="flex" alignItems="center" gap={2} mb={2}>
-        <Avatar sx={{ width: 64, height: 64, bgcolor: '#1976d2', fontSize: 32 }}>{worker.name?.[0] || '?'}</Avatar>
-        <Box>
-          <Typography variant="h5" fontWeight={700}>
-            {worker.custom_id ? `${worker.custom_id} - ${worker.name}` : worker.name}
-          </Typography>
-          <Typography variant="subtitle1" color="textSecondary">{t("worker_id")}: <b style={{ color: '#1976d2', fontSize: 18 }}>{worker.custom_id || worker.id}</b></Typography>
-        </Box>
-      </Box>
-      {/* إشعارات العامل */}
-      <WorkerNotifications worker={worker} />
-      <Card>
-        <CardContent>
-          <Table>
-            <TableBody>
-              <TableRow>
-                <TableCell>{t("civil_id")}</TableCell>
-                <TableCell>{showField(worker.civil_id)}</TableCell>
-                <TableCell>{t("nationality")}</TableCell>
-                <TableCell>{showField(worker.nationality)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t("job_title")}</TableCell>
-                <TableCell>{showField(worker.job_title)}</TableCell>
-                <TableCell>{t("worker_type")}</TableCell>
-                <TableCell>{showField(worker.worker_type)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t("salary")}</TableCell>
-                <TableCell>{showField(worker.salary)}</TableCell>
-                <TableCell>{t("work_permit_start")}</TableCell>
-                <TableCell>{showField(worker.work_permit_start)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t("work_permit_end")}</TableCell>
-                <TableCell>{showField(worker.work_permit_end)}</TableCell>
-                <TableCell>{t("company")}</TableCell>
-                <TableCell>{showField(worker.company?.file_name || worker.company_id)}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>{t("license")}</TableCell>
-                <TableCell>{showField(worker.license?.name || worker.license_id)}</TableCell>
-                <TableCell>{t("passport_end")}</TableCell>
-                <TableCell>{showField(worker.passport_end)}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <Divider sx={{ my: 2 }} />
-          {/* رفع مستندات */}
-          <Box mb={2}>
-            <Typography variant="h6" mb={1}>{t('worker_documents') || 'مستندات العامل'}</Typography>
-            <Box display="flex" gap={2} alignItems="center">
-              <FormControl size="small" sx={{ minWidth: 140 }}>
-                <Select value={docType} onChange={e => setDocType(e.target.value)} displayEmpty>
-                  <MenuItem value="passport">جواز سفر</MenuItem>
-                  <MenuItem value="work_permit">إذن عمل</MenuItem>
-                  <MenuItem value="civil_id">بطاقة مدنية</MenuItem>
-                  <MenuItem value="other">أخرى</MenuItem>
-                </Select>
-              </FormControl>
-              <Button component="label" variant="outlined" startIcon={<CloudUploadIcon />} disabled={uploading}>
-                {t('upload_document') || 'رفع مستند'}
-                <input type="file" hidden onChange={handleFileChange} />
-              </Button>
-              {file && <Typography>{file.name}</Typography>}
-              <Button variant="contained" color="primary" onClick={handleUpload} disabled={uploading || !file}>{t('upload') || 'رفع'}</Button>
-              {fileError && <Typography color="error">{fileError}</Typography>}
-            </Box>
-          </Box>
-          {/* قائمة المستندات */}
-          <Box>
-            {documents.length === 0 ? (
-              <Typography color="textSecondary">{t('no_documents') || 'لا يوجد مستندات'}</Typography>
-            ) : (
-              <Table>
-                <TableBody>
-                  {documents.map(doc => (
-                    <TableRow key={doc.id}>
-                      <TableCell padding="checkbox">
-                        <Checkbox checked={selectedDocs.includes(doc.id)} onChange={e => {
-                          if (e.target.checked) setSelectedDocs(prev => [...prev, doc.id]);
-                          else setSelectedDocs(prev => prev.filter(id => id !== doc.id));
-                        }} />
-                      </TableCell>
-                      <TableCell>{doc.filename}</TableCell>
-                      <TableCell>{doc.doc_type === 'passport' ? 'جواز سفر' : doc.doc_type === 'work_permit' ? 'إذن عمل' : doc.doc_type === 'civil_id' ? 'بطاقة مدنية' : 'أخرى'}</TableCell>
-                      <TableCell>
-                        <Button size="small" startIcon={<DownloadIcon />} onClick={() => handleDownload(doc.filepath)}>{t('download') || 'تنزيل'}</Button>
-                        <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => handleDeleteDoc(doc.id)}>{t('delete') || 'حذف'}</Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-            {/* زر تنزيل جماعي */}
-            {selectedDocs.length > 0 && (
-              <Button variant="contained" color="primary" startIcon={<DownloadIcon />} sx={{ mt: 1 }} onClick={() => {
-                documents.filter(doc => selectedDocs.includes(doc.id)).forEach(doc => handleDownload(doc.filepath));
-              }}>
-                {t('download_selected') || 'تنزيل المحدد'}
-              </Button>
-            )}
-          </Box>
-          <Divider sx={{ my: 2 }} />
-          <Box display="flex" gap={2}>
-            <Button variant="outlined" href="/workers">{t("back_to_workers")}</Button>
-            <Button variant="contained" color="primary" onClick={() => window.print()}>{t("print") || 'طباعة'}</Button>
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
+    <div style={{ padding: "20px" }}>
+      <h1>ملف العامل</h1>
+      
+      <div style={{ marginBottom: "20px", padding: "15px", border: "1px solid #ddd", borderRadius: "5px" }}>
+        <h2>البيانات الأساسية</h2>
+        <p><strong>الاسم:</strong> {worker.name || "غير متوفر"}</p>
+        <p><strong>الرقم المدني:</strong> {worker.civil_id || "غير متوفر"}</p>
+        <p><strong>الجنسية:</strong> {worker.nationality || "غير متوفر"}</p>
+        <p><strong>المسمى الوظيفي:</strong> {worker.job_title || "غير متوفر"}</p>
+        <p><strong>تاريخ التوظيف:</strong> {worker.hire_date || "غير متوفر"}</p>
+        <p><strong>الهاتف:</strong> {worker.phone || "غير متوفر"}</p>
+        <p><strong>الرقم المخصص:</strong> {worker.custom_id || "غير متوفر"}</p>
+      </div>
+
+      <div style={{ padding: "15px", border: "1px solid #ddd", borderRadius: "5px" }}>
+        <h2>المستندات ({documents.length})</h2>
+        {documents.length > 0 ? (
+          <ul>
+            {documents.map((doc, index) => (
+              <li key={index} style={{ marginBottom: "10px" }}>
+                <strong>{doc.filename}</strong> - {doc.doc_type} 
+                {doc.description && <span> ({doc.description})</span>}
+                {doc.upload_date && <span> - {new Date(doc.upload_date).toLocaleDateString()}</span>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>لا توجد مستندات مرفوعة</p>
+        )}
+      </div>
+    </div>
   );
 };
 

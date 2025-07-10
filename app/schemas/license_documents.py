@@ -4,6 +4,7 @@ from datetime import datetime, date
 from enum import Enum
 
 class ArchiveCategory(str, Enum):
+    model_config = {"from_attributes": True}
     contracts = "contracts"
     receipts = "receipts"
     insurances = "insurances"
@@ -13,6 +14,7 @@ class ArchiveCategory(str, Enum):
     other = "other"
 
 class ArchiveType(str, Enum):
+    model_config = {"from_attributes": True}
     rent_contract = "rent_contract"
     rent_receipt = "rent_receipt"
     insurance_policy = "insurance_policy"
@@ -24,12 +26,14 @@ class ArchiveType(str, Enum):
     other = "other"
 
 class DocumentStatus(str, Enum):
+    model_config = {"from_attributes": True}
     active = "active"
     expired = "expired"
     cancelled = "cancelled"
     renewed = "renewed"
 
 class PaymentMethod(str, Enum):
+    model_config = {"from_attributes": True}
     cash = "cash"
     bank_transfer = "bank_transfer"
     check = "check"
@@ -37,7 +41,9 @@ class PaymentMethod(str, Enum):
     other = "other"
 
 # License Document Schemas
+
 class LicenseDocumentBase(BaseModel):
+    model_config = {"from_attributes": True}
     document_type: str = Field(..., description="نوع المستند")
     description: Optional[str] = Field(None, description="وصف المستند")
     license_number: Optional[str] = Field(None, description="رقم الترخيص")
@@ -47,10 +53,12 @@ class LicenseDocumentBase(BaseModel):
     license_status: Optional[str] = Field(None, description="حالة الترخيص")
 
 class LicenseDocumentCreate(LicenseDocumentBase):
+    model_config = {"from_attributes": True}
     license_id: int = Field(..., description="معرف الترخيص")
     original_filename: str = Field(..., description="اسم الملف الأصلي")
 
 class LicenseDocumentUpdate(BaseModel):
+    model_config = {"from_attributes": True}
     document_type: Optional[str] = None
     description: Optional[str] = None
     license_number: Optional[str] = None
@@ -60,6 +68,7 @@ class LicenseDocumentUpdate(BaseModel):
     license_status: Optional[str] = None
 
 class LicenseDocumentResponse(LicenseDocumentBase):
+    model_config = {"from_attributes": True}
     id: int
     license_id: int
     filename: str
@@ -75,12 +84,9 @@ class LicenseDocumentResponse(LicenseDocumentBase):
     notification_3_months: bool = False
     notification_1_month: bool = False
     notification_1_week: bool = False
-    
-    class Config:
-        from_attributes = True
 
-# Document Archive Schemas
 class DocumentArchiveBase(BaseModel):
+    model_config = {"from_attributes": True}
     archive_type: ArchiveType = Field(..., description="نوع المستند")
     category: ArchiveCategory = Field(..., description="فئة المستند")
     title: str = Field(..., description="عنوان المستند")
@@ -103,9 +109,11 @@ class DocumentArchiveBase(BaseModel):
     is_important: bool = Field(True, description="مهم للأرشيف")
 
 class DocumentArchiveCreate(DocumentArchiveBase):
+    model_config = {"from_attributes": True}
     original_filename: str = Field(..., description="اسم الملف الأصلي")
 
 class DocumentArchiveUpdate(BaseModel):
+    model_config = {"from_attributes": True}
     archive_type: Optional[ArchiveType] = None
     category: Optional[ArchiveCategory] = None
     title: Optional[str] = None
@@ -128,6 +136,7 @@ class DocumentArchiveUpdate(BaseModel):
     is_important: Optional[bool] = None
 
 class DocumentArchiveResponse(DocumentArchiveBase):
+    model_config = {"from_attributes": True}
     id: int
     filename: str
     original_filename: str
@@ -135,12 +144,9 @@ class DocumentArchiveResponse(DocumentArchiveBase):
     filetype: str
     upload_date: datetime
     reminder_sent: bool = False
-    
-    class Config:
-        from_attributes = True
 
-# License Type Schemas
 class LicenseTypeBase(BaseModel):
+    model_config = {"from_attributes": True}
     name: str = Field(..., description="اسم نوع الترخيص")
     name_ar: str = Field(..., description="اسم نوع الترخيص بالعربية")
     description: Optional[str] = Field(None, description="وصف نوع الترخيص")
@@ -151,9 +157,11 @@ class LicenseTypeBase(BaseModel):
     is_active: bool = Field(True, description="نشط")
 
 class LicenseTypeCreate(LicenseTypeBase):
+    model_config = {"from_attributes": True}
     pass
 
 class LicenseTypeUpdate(BaseModel):
+    model_config = {"from_attributes": True}
     name: Optional[str] = None
     name_ar: Optional[str] = None
     description: Optional[str] = None
@@ -164,14 +172,11 @@ class LicenseTypeUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 class LicenseTypeResponse(LicenseTypeBase):
+    model_config = {"from_attributes": True}
     id: int
     sub_license_types: List['LicenseTypeResponse'] = []
-    
-    class Config:
-        from_attributes = True
-
-# Archive Category Schemas
 class ArchiveCategoryBase(BaseModel):
+    model_config = {"from_attributes": True}
     name: str = Field(..., description="اسم الفئة")
     name_ar: str = Field(..., description="اسم الفئة بالعربية")
     description: Optional[str] = Field(None, description="وصف الفئة")
@@ -180,16 +185,15 @@ class ArchiveCategoryBase(BaseModel):
     is_active: bool = Field(True, description="نشط")
 
 class ArchiveCategoryCreate(ArchiveCategoryBase):
+    model_config = {"from_attributes": True}
     pass
 
 class ArchiveCategoryResponse(ArchiveCategoryBase):
+    model_config = {"from_attributes": True}
     id: int
-    
-    class Config:
-        from_attributes = True
 
-# Archive Type Schemas
 class ArchiveTypeBase(BaseModel):
+    model_config = {"from_attributes": True}
     name: str = Field(..., description="اسم النوع")
     name_ar: str = Field(..., description="اسم النوع بالعربية")
     category_id: int = Field(..., description="معرف الفئة")
@@ -200,46 +204,36 @@ class ArchiveTypeBase(BaseModel):
     is_active: bool = Field(True, description="نشط")
 
 class ArchiveTypeCreate(ArchiveTypeBase):
+    model_config = {"from_attributes": True}
     pass
 
 class ArchiveTypeResponse(ArchiveTypeBase):
+    model_config = {"from_attributes": True}
     id: int
     category: ArchiveCategoryResponse
-    
-    class Config:
-        from_attributes = True
 
-# Statistics Schemas
 class DocumentStatistics(BaseModel):
+    model_config = {"from_attributes": True}
     total_documents: int
     by_category: List[Dict[str, Any]]
     recurring_due: int
     expiring_contracts: int
-    
-    class Config:
-        from_attributes = True
 
-# Search Results
 class SearchResult(BaseModel):
+    model_config = {"from_attributes": True}
     license_documents: List[LicenseDocumentResponse] = []
     archived_documents: List[DocumentArchiveResponse] = []
     total_count: int = 0
-    
-    class Config:
-        from_attributes = True
 
-# File Upload Response
 class FileUploadResponse(BaseModel):
+    model_config = {"from_attributes": True}
     success: bool
     message: str
     document_id: Optional[int] = None
     filename: str
-    
-    class Config:
-        from_attributes = True
 
-# Notification Schema
 class DocumentNotification(BaseModel):
+    model_config = {"from_attributes": True}
     id: int
     type: str  # "license_expiry", "contract_expiry", "recurring_due"
     title: str
@@ -249,6 +243,3 @@ class DocumentNotification(BaseModel):
     company_id: Optional[int] = None
     license_id: Optional[int] = None
     priority: str = "medium"  # "low", "medium", "high"
-    
-    class Config:
-        from_attributes = True

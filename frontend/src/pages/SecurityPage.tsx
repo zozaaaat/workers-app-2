@@ -135,8 +135,7 @@ const SecuritySettingsPage: React.FC = () => {
               sx={{ mb: 2 }}
             />
 
-            <TextField
-              fullWidth
+            <TextField aria-label="input field" fullWidth
               label="عدد أيام انتهاء كلمة المرور"
               type="number"
               value={settings.passwordExpiryDays}
@@ -144,8 +143,7 @@ const SecuritySettingsPage: React.FC = () => {
               sx={{ mb: 2 }}
             />
 
-            <TextField
-              fullWidth
+            <TextField aria-label="input field" fullWidth
               label="عدد محاولات تسجيل الدخول المسموحة"
               type="number"
               value={settings.maxLoginAttempts}
@@ -153,8 +151,7 @@ const SecuritySettingsPage: React.FC = () => {
               sx={{ mb: 2 }}
             />
 
-            <TextField
-              fullWidth
+            <TextField aria-label="input field" fullWidth
               label="مهلة انتهاء الجلسة (بالدقائق)"
               type="number"
               value={settings.sessionTimeout}

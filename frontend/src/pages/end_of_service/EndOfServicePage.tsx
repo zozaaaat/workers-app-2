@@ -61,7 +61,7 @@ const EndOfServicePage: React.FC = () => {
       <Typography variant="h5" mb={2}>{t("end_of_service")}</Typography>
       <Button variant="contained" startIcon={<Delete />} sx={{ mb: 2 }}>{t("add_end_of_service")}</Button>
       <Box display="flex" gap={2} mb={2} flexWrap="wrap">
-        <TextField label={t("search_by_worker")} size="small" />
+        <TextField aria-label="input field" label={t("search_by_worker")} size="small" />
         <Typography variant="body2" sx={{ alignSelf: 'center' }}>{t("total_end_of_service")}: {totalEndOfService}</Typography>
       </Box>
       <Box mt={2} style={{ height: 400, width: "100%", position: 'relative' }}>

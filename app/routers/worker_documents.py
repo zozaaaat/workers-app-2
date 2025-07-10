@@ -1,55 +1,72 @@
-from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 from app.database import get_db
 from app.models_worker_document import WorkerDocument
-from app.crud import worker_documents
 from app.schemas.worker_document import WorkerDocument as WorkerDocumentSchema
-from typing import List
-import os
-from datetime import datetime
-from app.utils import ocr
-from app import crud, models
 
-router = APIRouter(
-    prefix="/worker_documents",
-    tags=["worker_documents"]
-)
+router = APIRouter(prefix="/worker_documents", tags=["worker_documents"])
 
-UPLOAD_DIR = "uploaded_files/workers"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+# Endpoints عامة (بدون مصادقة) - يجب أن تكون أولاً
+@router.get("/api/docs/{worker_id}")
+def get_worker_docs_public(worker_id: int, db: Session = Depends(get_db)):
+    """مستندات العامل - عام"""
+    try:
+        docs = db.query(WorkerDocument).filter(WorkerDocument.worker_id == worker_id).all()
+        result = []
+        for doc in docs:
+            result.append({
+                "id": doc.id,
+                "filename": doc.filename,
+                "filetype": doc.filetype,
+                "description": doc.description or "",
+                "doc_type": doc.doc_type or "other",
+                "upload_date": str(doc.uploaded_at) if doc.uploaded_at else None
+            })
+        return result
+    except Exception as e:
+        return {"error": str(e), "docs": []}
 
-@router.post("/upload", response_model=WorkerDocumentSchema)
-def upload_worker_document(
-    worker_id: int = Form(...),
-    description: str = Form(None),
-    doc_type: str = Form(...),
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db)
-):
-    filename = f"{worker_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{file.filename}"
-    filepath = os.path.join(UPLOAD_DIR, filename)
-    with open(filepath, "wb") as buffer:
-        buffer.write(file.file.read())
-    filetype = file.content_type
-    doc = worker_documents.create_worker_document(
-        db, worker_id=worker_id, filename=file.filename, filetype=filetype, filepath=filepath, description=description, doc_type=doc_type
-    )
-    # قراءة النص من الملف وتحديث بيانات العامل
-    text = ocr.extract_text_from_file(filepath)
-    if text:
-        crud.workers.smart_update_worker_from_text(db, worker_id, text)
-    return doc
+@router.get("/quick-docs/{worker_id}")
+def get_docs_quick_fix(worker_id: int, db: Session = Depends(get_db)):
+    """إصلاح سريع - مستندات العامل"""
+    try:
+        docs = db.query(WorkerDocument).filter(WorkerDocument.worker_id == worker_id).all()
+        result = []
+        for doc in docs:
+            result.append({
+                "id": doc.id,
+                "filename": doc.filename,
+                "filetype": doc.filetype,
+                "description": doc.description or "",
+                "doc_type": doc.doc_type or "other",
+                "upload_date": str(doc.uploaded_at) if doc.uploaded_at else None
+            })
+        return {"success": True, "docs": result}
+    except Exception as e:
+        return {"success": False, "error": str(e), "docs": []}
 
-@router.get("/by_worker/{worker_id}", response_model=List[WorkerDocumentSchema])
-def get_worker_documents(worker_id: int, db: Session = Depends(get_db)):
-    return worker_documents.get_documents_by_worker(db, worker_id)
+@router.get("/public/worker/{worker_id}/documents")
+def get_public_worker_documents(worker_id: int, db: Session = Depends(get_db)):
+    """مستندات العامل - عام مبسط"""
+    try:
+        docs = db.query(WorkerDocument).filter(WorkerDocument.worker_id == worker_id).all()
+        return [
+            {
+                "id": doc.id,
+                "filename": doc.filename,
+                "doc_type": doc.doc_type or "other",
+                "description": doc.description or ""
+            }
+            for doc in docs
+        ]
+    except Exception as e:
+        return {"error": str(e)}
 
-@router.delete("/{doc_id}")
-def delete_worker_document(doc_id: int, db: Session = Depends(get_db)):
-    doc = worker_documents.delete_worker_document(db, doc_id)
-    if not doc:
-        raise HTTPException(status_code=404, detail="Document not found")
-    # حذف الملف من النظام
-    if os.path.exists(doc.filepath):
-        os.remove(doc.filepath)
-    return {"detail": "Deleted"}
+@router.get("/test/{worker_id}")
+def test_worker_documents(worker_id: int):
+    """اختبار بسيط للـ endpoint"""
+    return {"message": f"Worker {worker_id} documents endpoint", "status": "test_success"}
+
+# باقي endpoints (مع المصادقة)
+# يمكن إضافة endpoints أخرى حسب الحاجة

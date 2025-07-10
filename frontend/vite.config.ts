@@ -3,21 +3,24 @@ import react from '@vitejs/plugin-react';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 
-export default defineConfig({
-  plugins: [react()],
+export default defineConfig(({ mode }) => {
+  const isDev = mode === 'development';
   
-  // Performance optimizations
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    sourcemap: process.env.NODE_ENV === 'development',
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
+  return {
+    plugins: [react()],
+    
+    // Performance optimizations
+    build: {
+      outDir: 'dist',
+      assetsDir: 'assets',
+      sourcemap: isDev,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
       },
-    },
     chunkSizeWarningLimit: 500,
     // Enable code splitting
     rollupOptions: {
@@ -60,4 +63,4 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
   },
-});
+}});  // إغلاق صحيح للـ function والـ config

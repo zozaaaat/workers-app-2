@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
-import { Delete, Edit } from "@mui/icons-material";
+import { Delete, Edit, Add } from "@mui/icons-material";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { API_URL } from '../../api';
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box, Button, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material";
+import { Box, Button, TextField, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert, IconButton } from "@mui/material";
 import { useAuth } from "../../context/AuthContext";
 
 const DeductionsPage: React.FC = () => {
@@ -22,26 +22,69 @@ const DeductionsPage: React.FC = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [newDeduction, setNewDeduction] = useState({ worker: '', amount: '', reason: '' });
   const [editDeduction, setEditDeduction] = useState<any>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredRows, setFilteredRows] = useState<any[]>([]);
+
+  // تصفية البيانات حسب البحث
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredRows(rows);
+    } else {
+      const filtered = rows.filter(row => 
+        row.worker?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.worker?.custom_id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.reason?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        row.amount?.toString().includes(searchTerm)
+      );
+      setFilteredRows(filtered);
+    }
+  }, [searchTerm, rows]);
   const columns: GridColDef[] = [
     { field: "id", headerName: t("id"), width: 90 },
-    { field: "worker", headerName: t("worker"), width: 150, valueGetter: (params: any) => {
-      const worker = params.row.worker;
+    { field: "worker", headerName: t("worker"), width: 150, valueGetter: (params: any) => { if (!params || !params.row) return ""; 
+      const worker = params.row?.worker;
       if (worker) {
-        if (worker.custom_id && worker.name) return `${worker.custom_id} - ${worker.name}`;
+        if (worker.custom_id && worker.name) return `${worker.custom_id } - ${worker.name}`;
         if (worker.custom_id) return worker.custom_id;
         if (worker.name) return worker.name;
       }
-      return params.row.worker_id || '';
+      return params.row?.worker_id || "";
     } },
     { field: "amount", headerName: t("amount"), width: 120 },
     { field: "reason", headerName: t("reason"), width: 200 },
-    { field: "actions", headerName: t("actions"), width: 150, renderCell: () => (<><Edit /><Delete /></>) }
+    { field: "actions", headerName: t("actions"), width: 150, renderCell: (params: any) => (
+      <Box>
+        <IconButton 
+          onClick={() => handleEditOpen(params.row)}
+          aria-label={t("edit")}
+          color="primary"
+        >
+          <Edit />
+        </IconButton>
+        <IconButton 
+          onClick={() => handleDelete(params.row.id)}
+          aria-label={t("delete")}
+          color="error"
+        >
+          <Delete />
+        </IconButton>
+      </Box>
+    ) }
   ];
   useEffect(() => {
     setLoading(true);
-    axios.get(`${API_URL}/deductions`).then(res => setRows(res.data)).finally(() => setLoading(false));
-  }, []);
-  const totalDeductions = rows.length;
+    axios.get(`${API_URL}/deductions`)
+      .then(res => {
+        setRows(res.data);
+        setFilteredRows(res.data);
+      })
+      .catch(error => {
+        console.error("API Error:", error);
+        setError(t('loadError'));
+      })
+      .finally(() => setLoading(false));
+  }, [t]);
+  const totalDeductions = filteredRows.length;
   const handleDelete = (id: number) => {
     setDeleteId(id);
     setConfirmOpen(true);
@@ -49,10 +92,10 @@ const DeductionsPage: React.FC = () => {
   const confirmDelete = async () => {
     if (!deleteId) return;
     try {
-      await axios.delete(`${API_URL}/deductions/${deleteId}`);
+      await axios.delete(`${API_URL}/deductions/${deleteId}`).catch(error => console.error("API Error:", error));
       setSuccess(t('deleteSuccess'));
       setRows(rows.filter(r => r.id !== deleteId));
-    } catch {
+    } catch (error) { console.error("API Error:", error);
       setError(t('deleteError'));
     } finally {
       setConfirmOpen(false);
@@ -77,11 +120,14 @@ const DeductionsPage: React.FC = () => {
     }
     try {
       const res = await axios.post(`${API_URL}/deductions`, newDeduction);
-      setRows([...rows, res.data]);
+      const updatedRows = [...rows, res.data];
+      setRows(updatedRows);
+      setFilteredRows(updatedRows);
       setSuccess(t('addSuccess'));
       setAddOpen(false);
       setNewDeduction({ worker: '', amount: '', reason: '' });
-    } catch {
+    } catch (error) {
+      console.error("API Error:", error);
       setError(t('addError'));
     }
   };
@@ -96,32 +142,56 @@ const DeductionsPage: React.FC = () => {
     }
     try {
       const res = await axios.put(`${API_URL}/deductions/${editDeduction.id}`, editDeduction);
-      setRows(rows.map(r => r.id === editDeduction.id ? res.data : r));
+      const updatedRows = rows.map(r => r.id === editDeduction.id ? res.data : r);
+      setRows(updatedRows);
+      setFilteredRows(updatedRows);
       setSuccess(t('editSuccess'));
       setEditOpen(false);
       setEditDeduction(null);
-    } catch {
+    } catch (error) {
+      console.error("API Error:", error);
       setError(t('editError'));
     }
   };
   return (
     <Box p={2}>
       <Typography variant="h5" mb={2}>{t("deductions")}</Typography>
-      {canEdit && <Button variant="contained" startIcon={<Delete />} sx={{ mb: 2 }} onClick={() => setAddOpen(true)}>{t('add_deduction')}</Button>}
+      {canEdit && (
+        <Button 
+          variant="contained" 
+          startIcon={<Add />} 
+          sx={{ mb: 2 }} 
+          onClick={() => setAddOpen(true)}
+          aria-label="إضافة خصم جديد"
+        >
+          {t('add_deduction')}
+        </Button>
+      )}
       <Box display="flex" gap={2} mb={2} flexWrap="wrap">
-        <TextField label={t("search_by_worker")} size="small" />
+        <TextField aria-label="input field" label={t("search_by_worker")} 
+          size="small" 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}/>
         <Typography variant="body2" sx={{ alignSelf: 'center' }}>{t("total_deductions")}: {totalDeductions}</Typography>
       </Box>
       <Box mt={2} style={{ height: 400, width: "100%", position: 'relative' }}>
         {loading && <Box position="absolute" top={0} left={0} width="100%" height="100%" display="flex" alignItems="center" justifyContent="center" bgcolor="rgba(255,255,255,0.7)" zIndex={2}><CircularProgress /></Box>}
         <DataGrid
-          rows={rows}
+          rows={filteredRows}
           columns={columns.map(col =>
             col.field === "actions"
               ? { ...col, renderCell: canEdit ? (params => (
                 <>
-                  <Edit onClick={() => handleEditOpen(params.row)} style={{ cursor: 'pointer', color: '#1976d2', marginRight: 8 }} />
-                  <Delete onClick={e => { e.stopPropagation(); handleDelete(params.row.id); }} style={{ cursor: 'pointer', color: 'red' }} />
+                  <Edit 
+                    onClick={() => handleEditOpen(params.row)} 
+                    style={{ cursor: 'pointer', color: '#1976d2', marginRight: 8 }} 
+                    aria-label={`تعديل خصم ${params.row.id}`}
+                  />
+                  <Delete 
+                    onClick={e => { e.stopPropagation(); handleDelete(params.row.id); }} 
+                    style={{ cursor: 'pointer', color: 'red' }} 
+                    aria-label={`حذف خصم ${params.row.id}`}
+                  />
                 </>
               )) : () => null }
               : col
@@ -142,9 +212,9 @@ const DeductionsPage: React.FC = () => {
         <Dialog open={addOpen} onClose={() => setAddOpen(false)}>
           <DialogTitle>{t('add_deduction')}</DialogTitle>
           <DialogContent>
-            <TextField margin="dense" label={t('worker')} name="worker" value={newDeduction.worker} onChange={handleAddChange} fullWidth required error={!newDeduction.worker} helperText={!newDeduction.worker ? t('required') : ''} />
-            <TextField margin="dense" label={t('amount')} name="amount" type="number" value={newDeduction.amount} onChange={handleAddChange} fullWidth required error={!newDeduction.amount} helperText={!newDeduction.amount ? t('required') : ''} />
-            <TextField margin="dense" label={t('reason')} name="reason" value={newDeduction.reason} onChange={handleAddChange} fullWidth required error={!newDeduction.reason} helperText={!newDeduction.reason ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('worker')} name="worker" value={newDeduction.worker} onChange={handleAddChange} fullWidth required error={!newDeduction.worker} helperText={!newDeduction.worker ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('amount')} name="amount" type="number" value={newDeduction.amount} onChange={handleAddChange} fullWidth required error={!newDeduction.amount} helperText={!newDeduction.amount ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('reason')} name="reason" value={newDeduction.reason} onChange={handleAddChange} fullWidth required error={!newDeduction.reason} helperText={!newDeduction.reason ? t('required') : ''} />
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setAddOpen(false)}>{t('cancel')}</Button>
@@ -154,9 +224,9 @@ const DeductionsPage: React.FC = () => {
         <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
           <DialogTitle>{t('edit_deduction')}</DialogTitle>
           <DialogContent>
-            <TextField margin="dense" label={t('worker')} name="worker" value={editDeduction?.worker || ''} onChange={handleEditChange} fullWidth required error={editDeduction && !editDeduction.worker} helperText={editDeduction && !editDeduction.worker ? t('required') : ''} />
-            <TextField margin="dense" label={t('amount')} name="amount" type="number" value={editDeduction?.amount || ''} onChange={handleEditChange} fullWidth required error={editDeduction && !editDeduction.amount} helperText={editDeduction && !editDeduction.amount ? t('required') : ''} />
-            <TextField margin="dense" label={t('reason')} name="reason" value={editDeduction?.reason || ''} onChange={handleEditChange} fullWidth required error={editDeduction && !editDeduction.reason} helperText={editDeduction && !editDeduction.reason ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('worker')} name="worker" value={editDeduction?.worker || ''} onChange={handleEditChange} fullWidth required error={editDeduction && !editDeduction.worker} helperText={editDeduction && !editDeduction.worker ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('amount')} name="amount" type="number" value={editDeduction?.amount || ''} onChange={handleEditChange} fullWidth required error={editDeduction && !editDeduction.amount} helperText={editDeduction && !editDeduction.amount ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('reason')} name="reason" value={editDeduction?.reason || ''} onChange={handleEditChange} fullWidth required error={editDeduction && !editDeduction.reason} helperText={editDeduction && !editDeduction.reason ? t('required') : ''} />
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setEditOpen(false)}>{t('cancel')}</Button>

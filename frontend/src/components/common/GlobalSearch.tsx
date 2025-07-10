@@ -109,14 +109,15 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
           worker.name?.toLowerCase().includes(lowerQuery) ||
           worker.civil_id?.includes(query) ||
           worker.custom_id?.includes(query) ||
-          worker.job_title?.toLowerCase().includes(lowerQuery)
+          worker.job_title?.toLowerCase().includes(lowerQuery) ||
+          worker.nationality?.toLowerCase().includes(lowerQuery)
         ) {
           results.push({
             id: worker.id,
             type: 'worker',
             title: worker.name,
             subtitle: `${worker.civil_id} - ${worker.job_title}`,
-            description: `الشركة: ${worker.company?.file_name || 'غير محدد'}`,
+            description: `الشركة: ${worker.company?.file_name || 'غير محدد'} - الجنسية: ${worker.nationality}`,
             data: worker
           });
         }
@@ -160,14 +161,104 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
         }
       });
 
-      // يمكن إضافة البحث في الغيابات، الإجازات، المخالفات، والخصومات هنا
-      // حالياً سنتركها فارغة لأن الـ API غير متوفر بعد
+      // البحث في الغيابات (جديد)
+      try {
+        const absences = await api.absences.getAll();
+        absences.forEach((absence: any) => {
+          if (
+            absence.worker_name?.toLowerCase().includes(lowerQuery) ||
+            absence.reason?.toLowerCase().includes(lowerQuery) ||
+            absence.absence_date?.includes(query)
+          ) {
+            results.push({
+              id: absence.id,
+              type: 'absence',
+              title: `غياب: ${absence.worker_name}`,
+              subtitle: `التاريخ: ${absence.absence_date}`,
+              description: `السبب: ${absence.reason} - الحالة: ${absence.status}`,
+              data: absence
+            });
+          }
+        });
+      } catch (error) {
+        console.log('Absences search failed:', error);
+      }
+
+      // البحث في الإجازات (جديد)
+      try {
+        const leaves = await api.leaves.getAll();
+        leaves.forEach((leave: any) => {
+          if (
+            leave.worker_name?.toLowerCase().includes(lowerQuery) ||
+            leave.leave_type?.toLowerCase().includes(lowerQuery) ||
+            leave.start_date?.includes(query) ||
+            leave.end_date?.includes(query)
+          ) {
+            results.push({
+              id: leave.id,
+              type: 'leave',
+              title: `إجازة: ${leave.worker_name}`,
+              subtitle: `${leave.start_date} إلى ${leave.end_date}`,
+              description: `نوع الإجازة: ${leave.leave_type} - الحالة: ${leave.status}`,
+              data: leave
+            });
+          }
+        });
+      } catch (error) {
+        console.log('Leaves search failed:', error);
+      }
+
+      // البحث في المخالفات (جديد)
+      try {
+        const violations = await api.violations.getAll();
+        violations.forEach((violation: any) => {
+          if (
+            violation.worker_name?.toLowerCase().includes(lowerQuery) ||
+            violation.violation_type?.toLowerCase().includes(lowerQuery) ||
+            violation.description?.toLowerCase().includes(lowerQuery)
+          ) {
+            results.push({
+              id: violation.id,
+              type: 'violation',
+              title: `مخالفة: ${violation.worker_name}`,
+              subtitle: `النوع: ${violation.violation_type}`,
+              description: `التفاصيل: ${violation.description}`,
+              data: violation
+            });
+          }
+        });
+      } catch (error) {
+        console.log('Violations search failed:', error);
+      }
+
+      // البحث في الخصومات (جديد)
+      try {
+        const deductions = await api.deductions.getAll();
+        deductions.forEach((deduction: any) => {
+          if (
+            deduction.worker_name?.toLowerCase().includes(lowerQuery) ||
+            deduction.deduction_type?.toLowerCase().includes(lowerQuery) ||
+            deduction.description?.toLowerCase().includes(lowerQuery)
+          ) {
+            results.push({
+              id: deduction.id,
+              type: 'deduction',
+              title: `خصم: ${deduction.worker_name}`,
+              subtitle: `النوع: ${deduction.deduction_type} - المبلغ: ${deduction.amount}`,
+              description: `التفاصيل: ${deduction.description}`,
+              data: deduction
+            });
+          }
+        });
+      } catch (error) {
+        console.log('Deductions search failed:', error);
+      }
 
     } catch (error) {
       console.error('Error in search:', error);
     }
 
-    return results.slice(0, 20); // حد أقصى 20 نتيجة
+    return results.slice(0, 30); // حد أقصى 30 نتيجة (زيادة من 20)
   };
 
   // أيقونة حسب نوع النتيجة
@@ -245,7 +336,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
         {/* صندوق البحث */}
         <TextField
           fullWidth
-          placeholder="ابحث في العمال، الشركات، التراخيص..."
+          placeholder="ابحث في العمال، الشركات، التراخيص، الغيابات، الإجازات، المخالفات، والخصومات..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{

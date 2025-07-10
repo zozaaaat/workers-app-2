@@ -3,6 +3,8 @@ from typing import Optional
 from datetime import datetime
 
 class NotificationBase(BaseModel):
+    model_config = {"from_attributes": True}
+
     message: str
     type: Optional[str] = "general"
     user_id: Optional[int] = None
@@ -35,6 +37,3 @@ class Notification(NotificationBase):
     action_status: Optional[str] = None
     icon: Optional[str] = None
     color: Optional[str] = None
-
-    class Config:
-        orm_mode = True

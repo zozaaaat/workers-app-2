@@ -1,0 +1,366 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Container,
+  Paper,
+  Typography,
+  Button,
+  Box,
+  Card,
+  CardContent,
+  Alert,
+  CircularProgress,
+  Divider
+} from '@mui/material';
+import {
+  TableChart as ExcelIcon,
+  PictureAsPdf as PdfIcon,
+  CheckCircle as CheckIcon,
+  Refresh as RefreshIcon
+} from '@mui/icons-material';
+import { ExportService } from '../services/ExportService';
+
+const ExportTestFinal: React.FC = () => {
+  const [exportStatus, setExportStatus] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [realData, setRealData] = useState<{
+    workers: any[];
+    absences: any[];
+    leaves: any[];
+  }>({
+    workers: [],
+    absences: [],
+    leaves: []
+  });
+
+  // جلب البيانات الحقيقية من API
+  const fetchRealData = async () => {
+    setLoading(true);
+    try {
+      const [workersRes, absencesRes, leavesRes] = await Promise.all([
+        fetch('http://localhost:8000/workers/public'),
+        fetch('http://localhost:8000/absences'),
+        fetch('http://localhost:8000/leaves')
+      ]);
+
+      const [workersData, absencesData, leavesData] = await Promise.all([
+        workersRes.json(),
+        absencesRes.json(),
+        leavesRes.json()
+      ]);
+
+      setRealData({
+        workers: workersData || [],
+        absences: absencesData || [],
+        leaves: leavesData || []
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      setExportStatus('❌ خطأ في جلب البيانات من الخادم');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchRealData();
+  }, []);
+
+  // التعريفات للأعمدة
+  const workersColumns = [
+    { key: 'id', label: 'الرقم' },
+    { key: 'name', label: 'اسم العامل' },
+    { key: 'civil_id', label: 'الرقم المدني' },
+    { key: 'nationality', label: 'الجنسية' },
+    { key: 'job_title', label: 'المسمى الوظيفي' },
+    { key: 'salary', label: 'الراتب', format: (value: number) => `${value || 0} د.ك` },
+    { key: 'hire_date', label: 'تاريخ التعيين' },
+    { key: 'phone', label: 'رقم الهاتف' }
+  ];
+
+  const absencesColumns = [
+    { key: 'id', label: 'الرقم' },
+    { key: 'worker_name', label: 'اسم العامل' },
+    { key: 'absence_date', label: 'تاريخ الغياب' },
+    { key: 'reason', label: 'السبب' },
+    { key: 'status', label: 'الحالة' }
+  ];
+
+  const leavesColumns = [
+    { key: 'id', label: 'الرقم' },
+    { key: 'worker_name', label: 'اسم العامل' },
+    { key: 'leave_type', label: 'نوع الإجازة' },
+    { key: 'start_date', label: 'تاريخ البداية' },
+    { key: 'end_date', label: 'تاريخ النهاية' },
+    { key: 'status', label: 'الحالة' }
+  ];
+
+  // وظائف التصدير
+  const handleExportWorkersExcel = () => {
+    try {
+      ExportService.exportToExcel(realData.workers, workersColumns, {
+        format: 'excel',
+        filename: `workers_${new Date().toISOString().split('T')[0]}.xlsx`,
+        title: 'بيانات العمال',
+        includeDate: true,
+        includeStats: true
+      });
+      setExportStatus(`✅ تم تصدير ${realData.workers.length} عامل إلى Excel بنجاح!`);
+    } catch (error) {
+      setExportStatus(`❌ خطأ في تصدير العمال: ${error}`);
+    }
+  };
+
+  const handleExportWorkersPDF = () => {
+    try {
+      ExportService.exportToPDF(realData.workers, workersColumns, {
+        format: 'pdf',
+        filename: `workers_${new Date().toISOString().split('T')[0]}.pdf`,
+        title: 'تقرير بيانات العمال',
+        includeDate: true,
+        includeStats: true,
+        rtl: true
+      });
+      setExportStatus(`✅ تم تصدير ${realData.workers.length} عامل إلى PDF بنجاح!`);
+    } catch (error) {
+      setExportStatus(`❌ خطأ في تصدير العمال: ${error}`);
+    }
+  };
+
+  const handleExportAbsencesExcel = () => {
+    try {
+      ExportService.exportToExcel(realData.absences, absencesColumns, {
+        format: 'excel',
+        filename: `absences_${new Date().toISOString().split('T')[0]}.xlsx`,
+        title: 'بيانات الغيابات',
+        includeDate: true,
+        includeStats: true
+      });
+      setExportStatus(`✅ تم تصدير ${realData.absences.length} سجل غياب إلى Excel بنجاح!`);
+    } catch (error) {
+      setExportStatus(`❌ خطأ في تصدير الغيابات: ${error}`);
+    }
+  };
+
+  const handleExportLeavesPDF = () => {
+    try {
+      ExportService.exportToPDF(realData.leaves, leavesColumns, {
+        format: 'pdf',
+        filename: `leaves_${new Date().toISOString().split('T')[0]}.pdf`,
+        title: 'تقرير الإجازات',
+        includeDate: true,
+        includeStats: true,
+        rtl: true
+      });
+      setExportStatus(`✅ تم تصدير ${realData.leaves.length} إجازة إلى PDF بنجاح!`);
+    } catch (error) {
+      setExportStatus(`❌ خطأ في تصدير الإجازات: ${error}`);
+    }
+  };
+
+  return (
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Paper sx={{ p: 3 }}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Typography variant="h4" component="h1">
+            🧪 اختبار ميزات التصدير المحسن
+          </Typography>
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={fetchRealData}
+            disabled={loading}
+          >
+            تحديث البيانات
+          </Button>
+        </Box>
+        
+        <Typography variant="body1" color="text.secondary" paragraph>
+          اختبار تصدير البيانات الحقيقية إلى Excel و PDF مع الخطوط العربية المحسنة
+        </Typography>
+
+        {loading && (
+          <Box display="flex" justifyContent="center" alignItems="center" my={4}>
+            <CircularProgress />
+            <Typography variant="body2" sx={{ ml: 2 }}>
+              جاري تحميل البيانات...
+            </Typography>
+          </Box>
+        )}
+
+        {/* إحصائيات البيانات */}
+        <Box display="flex" gap={2} mb={3} flexWrap="wrap">
+          <Card sx={{ minWidth: 200 }}>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <CheckIcon color="primary" sx={{ mr: 1 }} />
+                <Typography variant="h6">العمال</Typography>
+              </Box>
+              <Typography variant="h4" color="primary">
+                {realData.workers.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                عامل متاح
+              </Typography>
+            </CardContent>
+          </Card>
+
+          <Card sx={{ minWidth: 200 }}>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <CheckIcon color="warning" sx={{ mr: 1 }} />
+                <Typography variant="h6">الغيابات</Typography>
+              </Box>
+              <Typography variant="h4" color="warning.main">
+                {realData.absences.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                سجل غياب
+              </Typography>
+            </CardContent>
+          </Card>
+
+          <Card sx={{ minWidth: 200 }}>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <CheckIcon color="success" sx={{ mr: 1 }} />
+                <Typography variant="h6">الإجازات</Typography>
+              </Box>
+              <Typography variant="h4" color="success.main">
+                {realData.leaves.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                إجازة مسجلة
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
+
+        <Divider sx={{ my: 3 }} />
+
+        {/* أزرار التصدير */}
+        <Typography variant="h5" gutterBottom>
+          📊 تصدير البيانات الحقيقية
+        </Typography>
+
+        <Box display="flex" flexDirection="column" gap={3}>
+          {/* تصدير العمال */}
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                👥 بيانات العمال ({realData.workers.length} عامل)
+              </Typography>
+              <Box display="flex" gap={2} flexWrap="wrap">
+                <Button
+                  variant="contained"
+                  startIcon={<ExcelIcon />}
+                  onClick={handleExportWorkersExcel}
+                  disabled={realData.workers.length === 0}
+                  color="success"
+                >
+                  تصدير Excel
+                </Button>
+                <Button
+                  variant="contained"
+                  startIcon={<PdfIcon />}
+                  onClick={handleExportWorkersPDF}
+                  disabled={realData.workers.length === 0}
+                  color="error"
+                >
+                  تصدير PDF
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* تصدير الغيابات */}
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                ⚠️ بيانات الغيابات ({realData.absences.length} سجل)
+              </Typography>
+              <Box display="flex" gap={2} flexWrap="wrap">
+                <Button
+                  variant="contained"
+                  startIcon={<ExcelIcon />}
+                  onClick={handleExportAbsencesExcel}
+                  disabled={realData.absences.length === 0}
+                  color="success"
+                >
+                  تصدير Excel
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<PdfIcon />}
+                  disabled={realData.absences.length === 0}
+                  color="error"
+                >
+                  تصدير PDF
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* تصدير الإجازات */}
+          <Card>
+            <CardContent>
+              <Typography variant="h6" gutterBottom>
+                🏖️ بيانات الإجازات ({realData.leaves.length} إجازة)
+              </Typography>
+              <Box display="flex" gap={2} flexWrap="wrap">
+                <Button
+                  variant="outlined"
+                  startIcon={<ExcelIcon />}
+                  disabled={realData.leaves.length === 0}
+                  color="success"
+                >
+                  تصدير Excel
+                </Button>
+                <Button
+                  variant="contained"
+                  startIcon={<PdfIcon />}
+                  onClick={handleExportLeavesPDF}
+                  disabled={realData.leaves.length === 0}
+                  color="error"
+                >
+                  تصدير PDF
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+
+        {/* حالة التصدير */}
+        {exportStatus && (
+          <Alert 
+            severity={exportStatus.includes('✅') ? 'success' : 'error'} 
+            sx={{ mt: 3 }}
+            onClose={() => setExportStatus('')}
+          >
+            {exportStatus}
+          </Alert>
+        )}
+
+        {/* معلومات إضافية */}
+        <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.50', borderRadius: 1 }}>
+          <Typography variant="h6" gutterBottom>
+            ℹ️ تحسينات التصدير الجديدة
+          </Typography>
+          <Typography variant="body2" paragraph>
+            ✅ تم تحسين تصدير PDF لدعم النصوص العربية بشكل أفضل
+          </Typography>
+          <Typography variant="body2" paragraph>
+            ✅ يتم جلب البيانات من الخادم مباشرة مع {realData.workers.length + realData.absences.length + realData.leaves.length} عنصر
+          </Typography>
+          <Typography variant="body2" paragraph>
+            ✅ الملفات المصدرة تتضمن التاريخ والإحصائيات والتنسيق العربي
+          </Typography>
+          <Typography variant="body2">
+            ✅ تم إضافة الخطوط العربية وتحسين اتجاه النص (RTL)
+          </Typography>
+        </Box>
+      </Paper>
+    </Container>
+  );
+};
+
+export default ExportTestFinal;

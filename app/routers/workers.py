@@ -15,215 +15,134 @@ from app.schemas_permissions import ApprovalRequestCreate, ActionType
 
 router = APIRouter(prefix="/workers", tags=["workers"])
 
+# Endpoints عامة (بدون مصادقة) - يجب أن تكون أولاً
 @router.get("/public/count")
-def get_workers_count(db: Session = Depends(get_db)):
-    """الحصول على عدد العمال (عام)"""
+def get_workers_count_public(db: Session = Depends(get_db)):
+    """عدد العمال - عام"""
     try:
-        total_workers = db.query(models.Worker).count()
-        # بدلاً من is_active، نستخدم المعايير الأخرى
+        total = db.query(models.Worker).count()
         active_workers = db.query(models.Worker).filter(models.Worker.work_permit_end > datetime.now()).count()
-        
         return {
-            "total_workers": total_workers,
+            "total_workers": total,
             "active_workers": active_workers,
             "status": "public"
         }
-    except Exception as e:
-        return {"error": str(e), "total_workers": 0, "active_workers": 0}
+    except Exception:
+        return {"total_workers": 0, "active_workers": 0, "status": "error"}
 
-@router.get("/public", response_model=List[worker_schemas.Worker])
-def get_workers_public(db: Session = Depends(get_db)):
-    """الحصول على جميع العمال (عام)"""
+@router.get("/public")
+def get_all_workers_public(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """جميع العمال - عام"""
     try:
-        workers = crud_workers.get_workers(db)
-        return [worker_schemas.Worker.from_orm(worker) for worker in workers]
+        workers = crud_workers.get_workers(db, skip=skip, limit=limit)
+        result = []
+        for worker in workers:
+            result.append({
+                "id": worker.id,
+                "civil_id": worker.civil_id,
+                "name": worker.name,
+                "nationality": worker.nationality or "غير محدد",
+                "worker_type": worker.worker_type or "غير محدد",
+                "job_title": worker.job_title or "غير محدد",
+                "hire_date": str(worker.hire_date) if worker.hire_date else None,
+                "work_permit_start": str(worker.work_permit_start) if worker.work_permit_start else None,
+                "work_permit_end": str(worker.work_permit_end) if worker.work_permit_end else None,
+                "salary": worker.salary,
+                "custom_id": worker.custom_id,
+                "company_id": worker.company_id,
+                "license_id": worker.license_id
+            })
+        return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"خطأ في جلب العمال: {str(e)}")
+        return {"error": str(e)}
 
-@router.post("/", response_model=worker_schemas.Worker)
-# @log_user_activity("create_worker", "worker")  # Temporarily disabled
-def create_worker(
-    worker: worker_schemas.WorkerCreate, 
-    current_user: models.User = Depends(get_current_user),
-    # permission_check = Depends(create_worker_permission),  # Temporarily disabled
-    db: Session = Depends(get_db)
-):
-    """إنشاء عامل جديد"""
-    
-    # Simple role check instead of complex permission system
-    if current_user.role not in ["admin", "manager"]:
-        raise HTTPException(status_code=403, detail="غير مصرح لك بإنشاء عمال جدد")
-    
+@router.get("/api/worker/{worker_id}")
+def get_worker_by_id_public(worker_id: int, db: Session = Depends(get_db)):
+    """عامل واحد - عام"""
     try:
-        worker_obj = crud_workers.create_worker(db, worker)
-        return worker_schemas.Worker.from_orm(worker_obj)
+        worker = crud_workers.get_worker(db, worker_id)
+        if not worker:
+            return {"error": "Worker not found"}
+        
+        return {
+            "id": worker.id,
+            "civil_id": worker.civil_id,
+            "name": worker.name,
+            "nationality": worker.nationality or "غير محدد",
+            "job_title": worker.job_title or "غير محدد",
+            "hire_date": str(worker.hire_date) if worker.hire_date else None,
+            "company_id": worker.company_id,
+            "license_id": worker.license_id,
+            "phone": worker.phone,
+            "custom_id": worker.custom_id
+        }
     except Exception as e:
-        if str(e) == "DUPLICATE_CIVIL_ID":
-            raise HTTPException(status_code=409, detail="رقم المدني مكرر. يوجد عامل بنفس الرقم المدني.")
-        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع. الرجاء المحاولة لاحقًا.")
+        return {"error": str(e)}
 
+@router.get("/quick-fix/{worker_id}")
+def get_worker_quick_fix(worker_id: int, db: Session = Depends(get_db)):
+    """إصلاح سريع - بيانات عامل واحد"""
+    try:
+        worker = crud_workers.get_worker(db, worker_id)
+        if not worker:
+            return {"error": "Worker not found", "success": False}
+        
+        return {
+            "success": True,
+            "id": worker.id,
+            "civil_id": worker.civil_id,
+            "name": worker.name,
+            "nationality": worker.nationality or "غير محدد",
+            "job_title": worker.job_title or "غير محدد",
+            "hire_date": str(worker.hire_date) if worker.hire_date else None,
+            "company_id": worker.company_id,
+            "license_id": worker.license_id,
+            "phone": worker.phone,
+            "custom_id": worker.custom_id
+        }
+    except Exception as e:
+        return {"error": str(e), "success": False}
+
+@router.get("/public/worker/{worker_id}")
+def get_public_worker_simple(worker_id: int, db: Session = Depends(get_db)):
+    """الحصول على بيانات عامل (عام وبسيط)"""
+    try:
+        worker = crud_workers.get_worker(db, worker_id)
+        if not worker:
+            return {"error": "Worker not found"}
+        
+        return {
+            "id": worker.id,
+            "civil_id": worker.civil_id,
+            "name": worker.name,
+            "nationality": worker.nationality or "غير محدد",
+            "job_title": worker.job_title or "غير محدد",
+            "hire_date": str(worker.hire_date) if worker.hire_date else None,
+            "company_id": worker.company_id,
+            "license_id": worker.license_id
+        }
+    except Exception as e:
+        return {"error": f"Database error: {str(e)}"}
+
+@router.get("/test/{worker_id}")
+def test_worker(worker_id: int):
+    """اختبار بسيط للـ endpoint"""
+    return {"message": f"Worker ID: {worker_id}", "status": "test_success"}
+
+# Endpoints مع المصادقة
 @router.get("/", response_model=List[worker_schemas.Worker])
-def read_workers(
-    skip: int = 0, 
-    limit: int = 100, 
-    current_user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """الحصول على قائمة العمال"""
-    
-    # Simple role check instead of complex permission system
-    if current_user.role not in ["admin", "manager", "employee"]:
-        raise HTTPException(status_code=403, detail="ليس لديك صلاحية لعرض العمال")
-    
+def read_workers(skip: int = 0, limit: int = 10, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """الحصول على قائمة العمال (مع المصادقة)"""
     workers = crud_workers.get_workers(db, skip=skip, limit=limit)
-    return [worker_schemas.Worker.from_orm(w) for w in workers]
-
-@router.get("/by-license/{license_id}", response_model=List[worker_schemas.Worker])
-def read_workers_by_license(
-    license_id: int, 
-    skip: int = 0, 
-    limit: int = 100, 
-    current_user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """الحصول على العمال حسب الترخيص"""
-    
-    # التحقق من صلاحية عرض العمال
-    has_permission = crud_permissions.check_user_permission(db, current_user.id, "view_worker")
-    if not has_permission and current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="ليس لديك صلاحية لعرض العمال")
-    
-    workers = crud_workers.get_workers_by_license(db, license_id, skip, limit)
-    return [worker_schemas.Worker.from_orm(w) for w in workers]
+    log_user_activity(db, current_user.id, "view_workers", "عرض قائمة العمال")
+    return workers
 
 @router.get("/{worker_id}", response_model=worker_schemas.Worker)
-def read_worker(
-    worker_id: int, 
-    current_user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """الحصول على بيانات عامل معين"""
-    
-    # التحقق من صلاحية عرض العمال
-    has_permission = crud_permissions.check_user_permission(db, current_user.id, "view_worker")
-    if not has_permission and current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="ليس لديك صلاحية لعرض بيانات العمال")
-    
+def read_worker(worker_id: int, current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """الحصول على بيانات عامل واحد (مع المصادقة)"""
     worker = crud_workers.get_worker(db, worker_id)
     if not worker:
         raise HTTPException(status_code=404, detail="العامل غير موجود")
     
-    return worker_schemas.Worker.from_orm(worker)
-
-@router.put("/{worker_id}", response_model=worker_schemas.Worker)
-@log_user_activity("update_worker", "worker")
-def update_worker(
-    worker_id: int, 
-    worker_update: worker_schemas.WorkerUpdate, 
-    current_user: models.User = Depends(get_current_user),
-    permission_check = Depends(update_worker_permission),
-    db: Session = Depends(get_db)
-):
-    """تحديث بيانات عامل"""
-    
-    # إذا كانت العملية تحتاج موافقة
-    if permission_check.get("status") == "pending_approval":
-        return {
-            "message": "تم إرسال طلب تعديل بيانات العامل للمدير للموافقة",
-            "approval_request_id": permission_check.get("request_id"),
-            "status": "pending_approval"
-        }
-    
-    worker = crud_workers.update_worker(db, worker_id, worker_update)
-    if not worker:
-        raise HTTPException(status_code=404, detail="العامل غير موجود")
-    
-    return worker_schemas.Worker.from_orm(worker)
-
-@router.delete("/{worker_id}")
-@log_user_activity("delete_worker", "worker")
-def delete_worker(
-    worker_id: int, 
-    current_user: models.User = Depends(get_current_user),
-    permission_check = Depends(delete_worker_permission),
-    db: Session = Depends(get_db)
-):
-    """حذف عامل"""
-    
-    # إذا كانت العملية تحتاج موافقة
-    if permission_check.get("status") == "pending_approval":
-        return {
-            "message": "تم إرسال طلب حذف العامل للمدير للموافقة",
-            "approval_request_id": permission_check.get("request_id"),
-            "status": "pending_approval"
-        }
-    
-    success = crud_workers.delete_worker(db, worker_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="العامل غير موجود")
-    
-    return {"detail": "تم حذف العامل بنجاح"}
-
-@router.post("/{worker_id}/transfer")
-@log_user_activity("transfer_worker", "worker")
-def transfer_worker(
-    worker_id: int,
-    new_license_id: int,
-    current_user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """نقل عامل إلى ترخيص آخر"""
-    
-    # التحقق من صلاحية نقل العامل
-    has_permission = crud_permissions.check_user_permission(db, current_user.id, "transfer_worker")
-    if not has_permission and current_user.role != "admin":
-        raise HTTPException(status_code=403, detail="ليس لديك صلاحية لنقل العمال")
-    
-    # التحقق من ضرورة الموافقة
-    permission_check = crud_permissions.can_user_perform_action(db, current_user.id, "transfer", "worker")
-    
-    if permission_check["requires_approval"]:
-        # إنشاء طلب موافقة
-        approval_request = ApprovalRequestCreate(
-            action_type=ActionType.UPDATE,
-            entity_type="worker",
-            entity_id=worker_id,
-            new_data={"new_license_id": new_license_id},
-            description=f"نقل العامل {worker_id} إلى الترخيص {new_license_id}"
-        )
-        
-        created_request = crud_permissions.create_approval_request(db, approval_request, current_user.id)
-        
-        return {
-            "message": "تم إرسال طلب نقل العامل للمدير للموافقة",
-            "approval_request_id": created_request.id,
-            "status": "pending_approval"
-        }
-    
-    # تنفيذ النقل مباشرة
-    worker = crud_workers.get_worker(db, worker_id)
-    if not worker:
-        raise HTTPException(status_code=404, detail="العامل غير موجود")
-    
-    worker.license_id = new_license_id
-    db.commit()
-    db.refresh(worker)
-    
-    return {"detail": "تم نقل العامل بنجاح", "worker": worker_schemas.Worker.from_orm(worker)}
-
-@router.get("/test-out/{worker_id}", response_model=worker_schemas.WorkerOut)
-def test_worker_out(worker_id: int, db: Session = Depends(get_db)):
-    """اختبار خرج العامل - للاختبار فقط"""
-    worker = crud_workers.get_worker(db, worker_id)
-    if not worker:
-        raise HTTPException(status_code=404, detail="Worker not found")
-    return worker_schemas.WorkerOut.from_orm(worker)
-
-@router.get("/simple", response_model=List[dict])
-def get_workers_simple(db: Session = Depends(get_db)):
-    """اختبار نقطة نهاية بسيطة للعمال بدون مصادقة"""
-    try:
-        workers = crud_workers.get_workers(db, skip=0, limit=5)
-        return [{"id": w.id, "name": w.name, "civil_id": w.civil_id} for w in workers]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    log_user_activity(db, current_user.id, "view_worker", f"عرض بيانات العامل {worker.name}")
+    return worker

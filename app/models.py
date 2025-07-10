@@ -9,6 +9,24 @@ from app.models_license_document import LicenseDocument, DocumentArchive
 # استيراد نماذج الأذونات والموافقات
 from .models_permissions import Permission, UserPermission, ApprovalRequest, ActivityLog
 
+# استيراد نماذج الملفات الطبية
+from .models_medical import (
+    MedicalFile, MedicalRecord, MedicalDocument,
+    HealthAndSafetyIncident, MedicalCheckupSchedule
+)
+
+# استيراد نماذج المكافآت والحوافز
+from .models_rewards import (
+    Reward, RewardCriteria, WorkerReward, IncentiveProgram,
+    IncentiveParticipation, PerformanceBonus, SalesCommission
+)
+
+# استيراد نماذج تقييم الأداء
+from .models_performance import (
+    PerformanceEvaluation, EvaluationCriteria, PerformanceGoal,
+    PerformancePlan, DevelopmentAction
+)
+
 # -----------------------------
 # شركة (Company)
 # -----------------------------
@@ -102,6 +120,22 @@ class Worker(Base):
     end_of_service_record = relationship("EndOfService", back_populates="worker", uselist=False)
     absences = relationship("Absence", back_populates="worker")
     documents = relationship("WorkerDocument", back_populates="worker")
+    
+    # Medical relationships
+    medical_file = relationship("MedicalFile", back_populates="worker", uselist=False)
+    safety_incidents = relationship("HealthAndSafetyIncident", back_populates="worker")
+    medical_checkups = relationship("MedicalCheckupSchedule", back_populates="worker")
+    
+    # Rewards relationships
+    worker_rewards = relationship("WorkerReward", back_populates="worker")
+    performance_bonuses = relationship("PerformanceBonus", back_populates="worker")
+    sales_commissions = relationship("SalesCommission", back_populates="worker")
+    incentives = relationship("Incentive", back_populates="worker")
+    
+    # Performance evaluation relationships
+    performance_evaluations = relationship("PerformanceEvaluation", back_populates="worker")
+    performance_goals = relationship("PerformanceGoal", back_populates="worker")
+    performance_plans = relationship("PerformancePlan", back_populates="worker")
 
     def __repr__(self):
         return f"<Worker(name={self.name}, civil_id={self.civil_id})>"

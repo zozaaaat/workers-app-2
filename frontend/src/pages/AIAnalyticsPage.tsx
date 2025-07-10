@@ -291,8 +291,7 @@ const AIAnalyticsPage: React.FC = () => {
             </Box>
             
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField
-                fullWidth
+              <TextField aria-label="input field" fullWidth
                 placeholder="اكتب سؤالك هنا..."
                 value={chatMessage}
                 onChange={(e) => setChatMessage(e.target.value)}

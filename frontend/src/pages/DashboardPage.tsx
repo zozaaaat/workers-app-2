@@ -365,9 +365,9 @@ const DashboardPage: React.FC = () => {
               <Badge color="error" badgeContent={unreadCount} sx={{ ml: 1 }} />
             </Typography>
             <Box>
-              <IconButton onClick={() => setNotifDialogOpen(true)} title="إشعار جديد"><AddAlertIcon /></IconButton>
-              <IconButton onClick={handleExportExcel} title="تصدير Excel"><DownloadIcon /></IconButton>
-              <IconButton onClick={handleMarkAllRead} title="تحديد الكل كمقروء"><DoneAllIcon /></IconButton>
+              <IconButton onClick={...} aria-label="button" title="إشعار جديد"><AddAlertIcon /></IconButton>
+              <IconButton onClick={...} aria-label="button" title="تصدير Excel"><DownloadIcon /></IconButton>
+              <IconButton onClick={...} aria-label="button" title="تحديد الكل كمقروء"><DoneAllIcon /></IconButton>
             </Box>
           </Box>
           <Paper sx={{ mb: 2, p: 0.5, display: 'flex', alignItems: 'center', width: 250 }}>
@@ -399,8 +399,8 @@ const DashboardPage: React.FC = () => {
             </FormControl>
             {notifDateFilter === 'custom' && (
               <>
-                <TextField size="small" type="date" value={notifCustomStart} onChange={e => setNotifCustomStart(e.target.value)} label="من" InputLabelProps={{ shrink: true }} />
-                <TextField size="small" type="date" value={notifCustomEnd} onChange={e => setNotifCustomEnd(e.target.value)} label="إلى" InputLabelProps={{ shrink: true }} />
+                <TextField aria-label="input field" size="small" type="date" value={notifCustomStart} onChange={e => setNotifCustomStart(e.target.value)} label="من" InputLabelProps={{ shrink: true }} />
+                <TextField aria-label="input field" size="small" type="date" value={notifCustomEnd} onChange={e => setNotifCustomEnd(e.target.value)} label="إلى" InputLabelProps={{ shrink: true }} />
               </>
             )}
             <Button variant="outlined" size="small" onClick={handleFilterNotifs}>تصفية</Button>
@@ -412,7 +412,7 @@ const DashboardPage: React.FC = () => {
           ) : (
             filteredNotifs.map(n => (
               <Box key={n.id} display="flex" alignItems="center" justifyContent="space-between" mb={1}>
-                <Box display="flex" alignItems="center" sx={{ flex: 1, cursor: 'pointer' }} onClick={() => handleMarkRead(n.id)}>
+                <Box role="button" display="flex" alignItems="center" sx={{ flex: 1, cursor: 'pointer' }} onClick={...}>
                   {/* عرض الرمز/الإيموجي/اللون المخصص */}
                   {n.emoji && <span style={{ fontSize: 22, marginRight: 6 }}>{n.emoji}</span>}
                   {n.icon && n.icon === 'info' && <InfoIcon sx={{ color: n.color || undefined, mr: 0.5 }} />}
@@ -547,8 +547,7 @@ const DashboardPage: React.FC = () => {
                 <MenuItem value="🔔" title={t('notification')}>🔔 {t('notification')}</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              label="إيموجي مخصص"
+            <TextField aria-label="input field" label="إيموجي مخصص"
               value={notifEmoji}
               onChange={e => setNotifEmoji(e.target.value)}
               inputProps={{ maxLength: 2, style: { fontSize: 24, textAlign: 'center' } }}
@@ -612,10 +611,9 @@ const DashboardPage: React.FC = () => {
               <MenuItem value="passport">{t('passport')}</MenuItem>
             </Select>
           </FormControl>
-          <TextField fullWidth label="نص الإشعار" sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
-          <TextField fullWidth label="تاريخ انتهاء الإشعار (اختياري)" sx={{ mt: 2 }} type="date" InputLabelProps={{ shrink: true }} value={notifDate} onChange={e => setNotifDate(e.target.value)} />
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth label="نص الإشعار" sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
+          <TextField aria-label="input field" fullWidth label="تاريخ انتهاء الإشعار (اختياري)" sx={{ mt: 2 }} type="date" InputLabelProps={{ shrink: true }} value={notifDate} onChange={e => setNotifDate(e.target.value)} />
+          <TextField aria-label="input field" fullWidth
             label="جدولة الإشعار (اختياري)"
             type="datetime-local"
             sx={{ mt: 2 }}

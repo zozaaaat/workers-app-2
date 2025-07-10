@@ -44,7 +44,7 @@ def test_all_endpoints():
     """اختبار جميع ال endpoints"""
     
     endpoints = [
-        "/workers",
+        "/workers/public",  # Changed to public endpoint
         "/companies", 
         "/leaves",
         "/absences",

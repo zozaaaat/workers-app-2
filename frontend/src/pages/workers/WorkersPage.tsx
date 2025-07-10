@@ -313,7 +313,7 @@ const WorkersPage: React.FC = () => {
         </Box>
       )}
       <Box display="flex" gap={2} mb={2} flexWrap="wrap">
-        <TextField label={t("search_by_name")} size="small" id="search-by-name" value={searchName} onChange={e => setSearchName(e.target.value)} />
+        <TextField aria-label="input field" label={t("search_by_name")} size="small" id="search-by-name" value={searchName} onChange={e => setSearchName(e.target.value)} />
         <FormControl size="small" sx={{ minWidth: 150 }}>
           <InputLabel>{t('company')}</InputLabel>
           <Select value={filterCompany} label={t('company')} onChange={e => setFilterCompany(e.target.value)}>
@@ -367,15 +367,15 @@ const WorkersPage: React.FC = () => {
         <Dialog open={addOpen} onClose={() => setAddOpen(false)}>
           <DialogTitle>{t('add_worker')}</DialogTitle>
           <DialogContent>
-            <TextField margin="dense" label={t('civil_id')} name="civil_id" id="add-worker-civil_id" value={newWorker.civil_id} onChange={handleAddChange} fullWidth required error={!newWorker.civil_id} helperText={!newWorker.civil_id ? t('required') : ''} />
-            <TextField margin="dense" label={t('name')} name="name" id="add-worker-name" value={newWorker.name} onChange={handleAddChange} fullWidth required error={!newWorker.name} helperText={!newWorker.name ? t('required') : ''} />
-            <TextField margin="dense" label={t('nationality')} name="nationality" id="add-worker-nationality" value={newWorker.nationality} onChange={handleAddChange} fullWidth required error={!newWorker.nationality} helperText={!newWorker.nationality ? t('required') : ''} />
-            <TextField margin="dense" label={t('worker_type')} name="worker_type" id="add-worker-worker_type" value={newWorker.worker_type} onChange={handleAddChange} fullWidth required error={!newWorker.worker_type} helperText={!newWorker.worker_type ? t('required') : ''} />
-            <TextField margin="dense" label={t('job_title')} name="job_title" id="add-worker-job_title" value={newWorker.job_title} onChange={handleAddChange} fullWidth required error={!newWorker.job_title} helperText={!newWorker.job_title ? t('required') : ''} />
-            <TextField margin="dense" label={t('hire_date')} name="hire_date" id="add-worker-hire_date" type="date" value={newWorker.hire_date} onChange={handleAddChange} fullWidth required InputLabelProps={{ shrink: true }} />
-            <TextField margin="dense" label={t('work_permit_start')} name="work_permit_start" id="add-worker-work_permit_start" type="date" value={newWorker.work_permit_start} onChange={handleAddChange} fullWidth required InputLabelProps={{ shrink: true }} />
-            <TextField margin="dense" label={t('work_permit_end')} name="work_permit_end" id="add-worker-work_permit_end" type="date" value={newWorker.work_permit_end} onChange={handleAddChange} fullWidth required InputLabelProps={{ shrink: true }} />
-            <TextField margin="dense" label={t('salary')} name="salary" id="add-worker-salary" value={newWorker.salary} onChange={handleAddChange} fullWidth required error={!newWorker.salary} helperText={!newWorker.salary ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('civil_id')} name="civil_id" id="add-worker-civil_id" value={newWorker.civil_id} onChange={handleAddChange} fullWidth required error={!newWorker.civil_id} helperText={!newWorker.civil_id ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('name')} name="name" id="add-worker-name" value={newWorker.name} onChange={handleAddChange} fullWidth required error={!newWorker.name} helperText={!newWorker.name ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('nationality')} name="nationality" id="add-worker-nationality" value={newWorker.nationality} onChange={handleAddChange} fullWidth required error={!newWorker.nationality} helperText={!newWorker.nationality ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('worker_type')} name="worker_type" id="add-worker-worker_type" value={newWorker.worker_type} onChange={handleAddChange} fullWidth required error={!newWorker.worker_type} helperText={!newWorker.worker_type ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('job_title')} name="job_title" id="add-worker-job_title" value={newWorker.job_title} onChange={handleAddChange} fullWidth required error={!newWorker.job_title} helperText={!newWorker.job_title ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('hire_date')} name="hire_date" id="add-worker-hire_date" type="date" value={newWorker.hire_date} onChange={handleAddChange} fullWidth required InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('work_permit_start')} name="work_permit_start" id="add-worker-work_permit_start" type="date" value={newWorker.work_permit_start} onChange={handleAddChange} fullWidth required InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('work_permit_end')} name="work_permit_end" id="add-worker-work_permit_end" type="date" value={newWorker.work_permit_end} onChange={handleAddChange} fullWidth required InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('salary')} name="salary" id="add-worker-salary" value={newWorker.salary} onChange={handleAddChange} fullWidth required error={!newWorker.salary} helperText={!newWorker.salary ? t('required') : ''} />
             <FormControl fullWidth margin="dense">
               <InputLabel id="company-select-label">{t('company')}</InputLabel>
               <Select
@@ -408,8 +408,8 @@ const WorkersPage: React.FC = () => {
                 ))}
               </Select>
             </FormControl>
-            <TextField margin="dense" label={t('passport_start')} name="passport_start" id="add-worker-passport_start" type="date" value={newWorker.passport_start} onChange={handleAddChange} fullWidth InputLabelProps={{ shrink: true }} />
-            <TextField margin="dense" label={t('passport_end')} name="passport_end" id="add-worker-passport_end" type="date" value={newWorker.passport_end} onChange={handleAddChange} fullWidth InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('passport_start')} name="passport_start" id="add-worker-passport_start" type="date" value={newWorker.passport_start} onChange={handleAddChange} fullWidth InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('passport_end')} name="passport_end" id="add-worker-passport_end" type="date" value={newWorker.passport_end} onChange={handleAddChange} fullWidth InputLabelProps={{ shrink: true }} />
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setAddOpen(false)}>{t('cancel')}</Button>
@@ -419,15 +419,15 @@ const WorkersPage: React.FC = () => {
         <Dialog open={editOpen} onClose={() => setEditOpen(false)}>
           <DialogTitle>{t('edit_worker')}</DialogTitle>
           <DialogContent>
-            <TextField margin="dense" label={t('civil_id')} name="civil_id" id="edit-worker-civil_id" value={editWorker?.civil_id || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.civil_id} helperText={editWorker && !editWorker.civil_id ? t('required') : ''} />
-            <TextField margin="dense" label={t('name')} name="name" id="edit-worker-name" value={editWorker?.name || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.name} helperText={editWorker && !editWorker.name ? t('required') : ''} />
-            <TextField margin="dense" label={t('nationality')} name="nationality" id="edit-worker-nationality" value={editWorker?.nationality || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.nationality} helperText={editWorker && !editWorker.nationality ? t('required') : ''} />
-            <TextField margin="dense" label={t('worker_type')} name="worker_type" id="edit-worker-worker_type" value={editWorker?.worker_type || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.worker_type} helperText={editWorker && !editWorker.worker_type ? t('required') : ''} />
-            <TextField margin="dense" label={t('job_title')} name="job_title" id="edit-worker-job_title" value={editWorker?.job_title || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.job_title} helperText={editWorker && !editWorker.job_title ? t('required') : ''} />
-            <TextField margin="dense" label={t('hire_date')} name="hire_date" id="edit-worker-hire_date" type="date" value={editWorker?.hire_date || ''} onChange={handleEditChange} fullWidth required InputLabelProps={{ shrink: true }} />
-            <TextField margin="dense" label={t('work_permit_start')} name="work_permit_start" id="edit-worker-work_permit_start" type="date" value={editWorker?.work_permit_start || ''} onChange={handleEditChange} fullWidth required InputLabelProps={{ shrink: true }} />
-            <TextField margin="dense" label={t('work_permit_end')} name="work_permit_end" id="edit-worker-work_permit_end" type="date" value={editWorker?.work_permit_end || ''} onChange={handleEditChange} fullWidth required InputLabelProps={{ shrink: true }} />
-            <TextField margin="dense" label={t('salary')} name="salary" id="edit-worker-salary" value={editWorker?.salary || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.salary} helperText={editWorker && !editWorker.salary ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('civil_id')} name="civil_id" id="edit-worker-civil_id" value={editWorker?.civil_id || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.civil_id} helperText={editWorker && !editWorker.civil_id ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('name')} name="name" id="edit-worker-name" value={editWorker?.name || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.name} helperText={editWorker && !editWorker.name ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('nationality')} name="nationality" id="edit-worker-nationality" value={editWorker?.nationality || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.nationality} helperText={editWorker && !editWorker.nationality ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('worker_type')} name="worker_type" id="edit-worker-worker_type" value={editWorker?.worker_type || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.worker_type} helperText={editWorker && !editWorker.worker_type ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('job_title')} name="job_title" id="edit-worker-job_title" value={editWorker?.job_title || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.job_title} helperText={editWorker && !editWorker.job_title ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('hire_date')} name="hire_date" id="edit-worker-hire_date" type="date" value={editWorker?.hire_date || ''} onChange={handleEditChange} fullWidth required InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('work_permit_start')} name="work_permit_start" id="edit-worker-work_permit_start" type="date" value={editWorker?.work_permit_start || ''} onChange={handleEditChange} fullWidth required InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('work_permit_end')} name="work_permit_end" id="edit-worker-work_permit_end" type="date" value={editWorker?.work_permit_end || ''} onChange={handleEditChange} fullWidth required InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('salary')} name="salary" id="edit-worker-salary" value={editWorker?.salary || ''} onChange={handleEditChange} fullWidth required error={editWorker && !editWorker.salary} helperText={editWorker && !editWorker.salary ? t('required') : ''} />
             <FormControl fullWidth margin="dense">
               <InputLabel id="edit-company-select-label">{t('company')}</InputLabel>
               <Select
@@ -460,8 +460,8 @@ const WorkersPage: React.FC = () => {
                 ))}
               </Select>
             </FormControl>
-            <TextField margin="dense" label={t('passport_start')} name="passport_start" id="edit-worker-passport_start" type="date" value={editWorker?.passport_start || ''} onChange={handleEditChange} fullWidth InputLabelProps={{ shrink: true }} />
-            <TextField margin="dense" label={t('passport_end')} name="passport_end" id="edit-worker-passport_end" type="date" value={editWorker?.passport_end || ''} onChange={handleEditChange} fullWidth InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('passport_start')} name="passport_start" id="edit-worker-passport_start" type="date" value={editWorker?.passport_start || ''} onChange={handleEditChange} fullWidth InputLabelProps={{ shrink: true }} />
+            <TextField aria-label="input field" margin="dense" label={t('passport_end')} name="passport_end" id="edit-worker-passport_end" type="date" value={editWorker?.passport_end || ''} onChange={handleEditChange} fullWidth InputLabelProps={{ shrink: true }} />
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setEditOpen(false)}>{t('cancel')}</Button>
@@ -532,9 +532,9 @@ const WorkersPage: React.FC = () => {
                 <MenuItem value="passport">{t('passport')}</MenuItem>
               </Select>
             </FormControl>
-            <TextField fullWidth label={t('notification_text')} sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
-            <TextField fullWidth label={t('notification_expiry') + ' (' + t('optional') + ')'} sx={{ mt: 2 }} type="date" InputLabelProps={{ shrink: true }} value={notifDate} onChange={e => setNotifDate(e.target.value)} />
-            <TextField fullWidth label={t('notification_schedule') + ' (' + t('optional') + ')'} type="datetime-local" sx={{ mt: 2 }} InputLabelProps={{ shrink: true }} value={notifSchedule} onChange={e => setNotifSchedule(e.target.value)} />
+            <TextField aria-label="input field" fullWidth label={t('notification_text')} sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
+            <TextField aria-label="input field" fullWidth label={t('notification_expiry') + ' (' + t('optional') + ')'} sx={{ mt: 2 }} type="date" InputLabelProps={{ shrink: true }} value={notifDate} onChange={e => setNotifDate(e.target.value)} />
+            <TextField aria-label="input field" fullWidth label={t('notification_schedule') + ' (' + t('optional') + ')'} type="datetime-local" sx={{ mt: 2 }} InputLabelProps={{ shrink: true }} value={notifSchedule} onChange={e => setNotifSchedule(e.target.value)} />
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel>{t('icon') + ' (' + t('optional') + ')'}</InputLabel>
               <Select value={notifIcon} label={t('icon') + ' (' + t('optional') + ')'} onChange={e => setNotifIcon(e.target.value)} disabled={!!notifEmoji}>
@@ -566,7 +566,7 @@ const WorkersPage: React.FC = () => {
                 <MenuItem value="🔔">🔔 {t('notification')}</MenuItem>
               </Select>
             </FormControl>
-            <TextField label={t('custom_emoji')} value={notifEmoji} onChange={e => setNotifEmoji(e.target.value)} inputProps={{ maxLength: 2, style: { fontSize: 24, textAlign: 'center' } }} sx={{ width: 80, mt: 2 }} disabled={!!notifIcon} placeholder="😊" />
+            <TextField aria-label="input field" label={t('custom_emoji')} value={notifEmoji} onChange={e => setNotifEmoji(e.target.value)} inputProps={{ maxLength: 2, style: { fontSize: 24, textAlign: 'center' } }} sx={{ width: 80, mt: 2 }} disabled={!!notifIcon} placeholder="😊" />
             <Box display="flex" alignItems="center" gap={1} mt={2}>
               <FormControl sx={{ minWidth: 100 }}>
                 <InputLabel>{t('custom_color')}</InputLabel>

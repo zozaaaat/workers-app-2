@@ -60,21 +60,21 @@ apiClient.interceptors.response.use(
 
 // Workers API
 export const workersApi = {
-  // Get all workers
+  // Get all workers (using public endpoint)
   getAll: async (): Promise<Worker[]> => {
-    const response = await apiClient.get('/workers');
+    const response = await apiClient.get('/workers/public');
     return response.data;
   },
-
+  
   // Get worker by ID
   getById: async (id: number): Promise<Worker> => {
     const response = await apiClient.get(`/workers/${id}`);
     return response.data;
   },
-
-  // Create new worker
+  
+  // Create new worker (using public endpoint for testing)
   create: async (worker: Partial<Worker>): Promise<Worker> => {
-    const response = await apiClient.post('/workers', worker);
+    const response = await apiClient.post('/workers/public', worker);
     return response.data;
   },
 

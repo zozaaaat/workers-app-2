@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosResponse, AxiosRequestConfig } from 'axios';
 
 // إعدادات الـ API
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // إنشاء instance مخصص من axios
 const apiClient = axios.create({
@@ -112,11 +112,11 @@ export class ApiService {
 // خدمات محددة للكيانات
 export class WorkersService {
   static async getAll() {
-    return ApiService.get('/workers');
+    return ApiService.get('/workers/public');
   }
 
   static async getById(id: number) {
-    return ApiService.get(`/workers/${id}`);
+    return ApiService.get(`/workers/test-out/${id}`);
   }
 
   static async create(data: any) {

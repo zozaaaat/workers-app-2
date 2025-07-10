@@ -128,12 +128,12 @@ const UsersPage: React.FC = () => {
       <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
         <DialogTitle>{editUser ? t('edit') : t('add')} {t('user')}</DialogTitle>
         <DialogContent>
-          <TextField margin="dense" label={t('username')} name="username" value={form.username || ""} onChange={handleFormChange} fullWidth required error={!form.username} helperText={!form.username ? t('required') : ''} />
+          <TextField aria-label="input field" margin="dense" label={t('username')} name="username" value={form.username || ""} onChange={handleFormChange} fullWidth required error={!form.username} helperText={!form.username ? t('required') : ''} />
           {!editUser && (
-            <TextField margin="dense" label={t('email')} name="email" value={form.email || ""} onChange={handleFormChange} fullWidth required error={!form.email} helperText={!form.email ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('email')} name="email" value={form.email || ""} onChange={handleFormChange} fullWidth required error={!form.email} helperText={!form.email ? t('required') : ''} />
           )}
           {!editUser && (
-            <TextField margin="dense" label={t('password')} name="password" type="password" value={form.password || ""} onChange={handleFormChange} fullWidth required error={!form.password} helperText={!form.password ? t('required') : ''} />
+            <TextField aria-label="input field" margin="dense" label={t('password')} name="password" type="password" value={form.password || ""} onChange={handleFormChange} fullWidth required error={!form.password} helperText={!form.password ? t('required') : ''} />
           )}
           <FormControl fullWidth margin="dense" required error={!form.role}>
             <InputLabel id="role-label">{t('role')}</InputLabel>

@@ -304,6 +304,7 @@ const CompaniesPageSimplified: React.FC = () => {
     'شركة محدودة المسؤولية',
     'شركة مساهمة',
     'فرع شركة أجنبية',
+    'تجاري عادي',
     'أخرى'
   ];
 
@@ -379,24 +380,21 @@ const CompaniesPageSimplified: React.FC = () => {
         maxWidth="md"
       >
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 2 }}>
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="رقم الملف *"
             value={formData.file_number}
             onChange={(e) => setFormData({...formData, file_number: e.target.value})}
             required
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="اسم الشركة *"
             value={formData.file_name}
             onChange={(e) => setFormData({...formData, file_name: e.target.value})}
             required
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="رقم السجل التجاري"
             value={formData.commercial_registration_number}
             onChange={(e) => setFormData({...formData, commercial_registration_number: e.target.value})}
@@ -417,44 +415,38 @@ const CompaniesPageSimplified: React.FC = () => {
             </Select>
           </FormControl>
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="الإدارة"
             value={formData.administration}
             onChange={(e) => setFormData({...formData, administration: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="نوع الملف"
             value={formData.file_type}
             onChange={(e) => setFormData({...formData, file_type: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="الكيان القانوني"
             value={formData.legal_entity}
             onChange={(e) => setFormData({...formData, legal_entity: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="فئة الملكية"
             value={formData.ownership_category}
             onChange={(e) => setFormData({...formData, ownership_category: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="البريد الإلكتروني"
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({...formData, email: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="رقم الهاتف"
             value={formData.phone}
             onChange={(e) => setFormData({...formData, phone: e.target.value})}
@@ -474,24 +466,21 @@ const CompaniesPageSimplified: React.FC = () => {
         maxWidth="md"
       >
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 2 }}>
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="رقم الملف *"
             value={formData.file_number}
             onChange={(e) => setFormData({...formData, file_number: e.target.value})}
             required
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="اسم الشركة *"
             value={formData.file_name}
             onChange={(e) => setFormData({...formData, file_name: e.target.value})}
             required
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="رقم السجل التجاري"
             value={formData.commercial_registration_number}
             onChange={(e) => setFormData({...formData, commercial_registration_number: e.target.value})}
@@ -512,44 +501,38 @@ const CompaniesPageSimplified: React.FC = () => {
             </Select>
           </FormControl>
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="الإدارة"
             value={formData.administration}
             onChange={(e) => setFormData({...formData, administration: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="نوع الملف"
             value={formData.file_type}
             onChange={(e) => setFormData({...formData, file_type: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="الكيان القانوني"
             value={formData.legal_entity}
             onChange={(e) => setFormData({...formData, legal_entity: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="فئة الملكية"
             value={formData.ownership_category}
             onChange={(e) => setFormData({...formData, ownership_category: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="البريد الإلكتروني"
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({...formData, email: e.target.value})}
           />
           
-          <TextField
-            fullWidth
+          <TextField aria-label="input field" fullWidth
             label="رقم الهاتف"
             value={formData.phone}
             onChange={(e) => setFormData({...formData, phone: e.target.value})}

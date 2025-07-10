@@ -3,6 +3,8 @@ from typing import Optional, List
 from datetime import date
 
 class LicenseBase(BaseModel):
+    model_config = {"from_attributes": True}
+
     name: str
     license_type: str
     status: Optional[str] = None
@@ -23,6 +25,3 @@ class LicenseUpdate(LicenseBase):
 class License(LicenseBase):
     id: int
     children: List["License"] = []
-
-    class Config:
-        orm_mode = True

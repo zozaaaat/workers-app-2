@@ -3,6 +3,8 @@ from typing import Optional
 from datetime import datetime
 
 class WorkerDocumentBase(BaseModel):
+    model_config = {"from_attributes": True}
+
     filename: str
     filetype: str
     description: Optional[str] = None
@@ -16,6 +18,3 @@ class WorkerDocument(WorkerDocumentBase):
     worker_id: int
     filepath: str
     uploaded_at: datetime
-
-    class Config:
-        orm_mode = True

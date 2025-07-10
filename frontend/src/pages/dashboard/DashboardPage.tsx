@@ -33,7 +33,8 @@ import {
   Legend,
   ArcElement,
   PointElement,
-  LineElement
+  LineElement,
+  Filler
 } from 'chart.js';
 import axios from 'axios';
 import { API_URL } from '../../api';
@@ -50,7 +51,8 @@ ChartJS.register(
   Title,
   ChartTooltip,
   Legend,
-  ArcElement
+  ArcElement,
+  Filler
 );
 
 interface DashboardStats {
@@ -157,7 +159,7 @@ const DashboardPage: React.FC = () => {
 
   const fetchDashboardStats = async () => {
     const [workers, companies, absences, leaves, documents] = await Promise.all([
-      axios.get(`${API_URL}/workers`),
+      axios.get(`${API_URL}/workers/public`),
       axios.get(`${API_URL}/companies`),
       axios.get(`${API_URL}/absences`),
       axios.get(`${API_URL}/leaves`),
@@ -347,6 +349,7 @@ const DashboardPage: React.FC = () => {
         <Tooltip title="تحديث البيانات">
           <IconButton 
             onClick={handleRefresh} 
+            aria-label="refresh button" 
             disabled={refreshing}
             sx={{ 
               bgcolor: 'primary.main', 
@@ -370,17 +373,17 @@ const DashboardPage: React.FC = () => {
         <Box flex="1 1 250px" minWidth="250px">
           <StatCard
             title="إجمالي العمال"
-            value={stats.workers}
+            value={stats?.workers || 0}
             icon={<WorkersIcon />}
             color="#4BC0C0"
-            subtitle={`${stats.workersThisMonth} معين هذا الشهر`}
-            trend={stats.workersThisMonth > 0 ? 12 : 0}
+            subtitle={`${stats?.workersThisMonth || 0} معين هذا الشهر`}
+            trend={stats?.workersThisMonth && stats.workersThisMonth > 0 ? 12 : 0}
           />
         </Box>
         <Box flex="1 1 250px" minWidth="250px">
           <StatCard
             title="الشركات المسجلة"
-            value={stats.companies}
+            value={stats?.companies || 0}
             icon={<CompanyIcon />}
             color="#36A2EB"
             subtitle="شركة نشطة"
@@ -389,7 +392,7 @@ const DashboardPage: React.FC = () => {
         <Box flex="1 1 250px" minWidth="250px">
           <StatCard
             title="انتهاء صالحية قريبة"
-            value={stats.upcomingExpirations}
+            value={stats?.upcomingExpirations || 0}
             icon={<WarningIcon />}
             color="#FF6384"
             subtitle="خلال الشهر القادم"
@@ -398,7 +401,7 @@ const DashboardPage: React.FC = () => {
         <Box flex="1 1 250px" minWidth="250px">
           <StatCard
             title="الإجازات النشطة"
-            value={stats.leaves}
+            value={stats?.leaves || 0}
             icon={<TaskIcon />}
             color="#FFCE56"
             subtitle="إجازة مستمرة"

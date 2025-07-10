@@ -264,8 +264,7 @@ const CompaniesPage: React.FC = () => {
         </Box>
       )}
       <Box display="flex" gap={2} mb={2} flexWrap="wrap">
-        <TextField
-          label={t('search_by_name')}
+        <TextField aria-label="input field" label={t('search_by_name')}
           value={search}
           onChange={e => setSearch(e.target.value)}
           size="small"
@@ -342,18 +341,18 @@ const CompaniesPage: React.FC = () => {
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
         <DialogTitle>{editCompany ? t('edit_company') : t('add_company')}</DialogTitle>
         <DialogContent>
-          <TextField margin="dense" label={t('general.file_number') || 'رقم الملف'} name="file_number" value={form.file_number || ""} onChange={handleFormChange} fullWidth required error={!form.file_number} helperText={!form.file_number ? t('required') : ''} />
-          <TextField margin="dense" label={t('general.file_status') || 'حالة الملف'} name="file_status" value={form.file_status || ""} onChange={handleFormChange} fullWidth />
-          <TextField margin="dense" label={t('general.creation_date') || 'تاريخ الإنشاء'} name="creation_date" type="date" value={form.creation_date || ""} onChange={handleFormChange} fullWidth InputLabelProps={{ shrink: true }} />
-          <TextField margin="dense" label={t('general.commercial_registration_number') || 'رقم السجل التجاري'} name="commercial_registration_number" value={form.commercial_registration_number || ""} onChange={handleFormChange} fullWidth />
-          <TextField margin="dense" label={t('general.file_name') || 'اسم الملف'} name="file_name" value={form.file_name || ""} onChange={handleFormChange} fullWidth required error={!form.file_name} helperText={!form.file_name ? t('required') : ''} />
-          <TextField margin="dense" label={t('general.file_classification') || 'تصنيف الملف'} name="file_classification" value={form.file_classification || ""} onChange={handleFormChange} fullWidth />
-          <TextField margin="dense" label={t('general.administration') || 'الإدارة'} name="administration" value={form.administration || ""} onChange={handleFormChange} fullWidth />
-          <TextField margin="dense" label={t('general.file_type') || 'نوع الملف'} name="file_type" value={form.file_type || ""} onChange={handleFormChange} fullWidth />
-          <TextField margin="dense" label={t('general.legal_entity') || 'الكيان القانوني'} name="legal_entity" value={form.legal_entity || ""} onChange={handleFormChange} fullWidth />
-          <TextField margin="dense" label={t('general.ownership_category') || 'فئة الملكية'} name="ownership_category" value={form.ownership_category || ""} onChange={handleFormChange} fullWidth />
-          <TextField margin="dense" label={t('general.total_workers') || 'إجمالي العمال'} name="total_workers" type="number" value={form.total_workers || ""} onChange={handleFormChange} fullWidth />
-          <TextField margin="dense" label={t('general.total_licenses') || 'إجمالي التراخيص'} name="total_licenses" type="number" value={form.total_licenses || ""} onChange={handleFormChange} fullWidth />
+          <TextField aria-label="input field" margin="dense" label={t('general.file_number') || 'رقم الملف'} name="file_number" value={form.file_number || ""} onChange={handleFormChange} fullWidth required error={!form.file_number} helperText={!form.file_number ? t('required') : ''} />
+          <TextField aria-label="input field" margin="dense" label={t('general.file_status') || 'حالة الملف'} name="file_status" value={form.file_status || ""} onChange={handleFormChange} fullWidth />
+          <TextField aria-label="input field" margin="dense" label={t('general.creation_date') || 'تاريخ الإنشاء'} name="creation_date" type="date" value={form.creation_date || ""} onChange={handleFormChange} fullWidth InputLabelProps={{ shrink: true }} />
+          <TextField aria-label="input field" margin="dense" label={t('general.commercial_registration_number') || 'رقم السجل التجاري'} name="commercial_registration_number" value={form.commercial_registration_number || ""} onChange={handleFormChange} fullWidth />
+          <TextField aria-label="input field" margin="dense" label={t('general.file_name') || 'اسم الملف'} name="file_name" value={form.file_name || ""} onChange={handleFormChange} fullWidth required error={!form.file_name} helperText={!form.file_name ? t('required') : ''} />
+          <TextField aria-label="input field" margin="dense" label={t('general.file_classification') || 'تصنيف الملف'} name="file_classification" value={form.file_classification || ""} onChange={handleFormChange} fullWidth />
+          <TextField aria-label="input field" margin="dense" label={t('general.administration') || 'الإدارة'} name="administration" value={form.administration || ""} onChange={handleFormChange} fullWidth />
+          <TextField aria-label="input field" margin="dense" label={t('general.file_type') || 'نوع الملف'} name="file_type" value={form.file_type || ""} onChange={handleFormChange} fullWidth />
+          <TextField aria-label="input field" margin="dense" label={t('general.legal_entity') || 'الكيان القانوني'} name="legal_entity" value={form.legal_entity || ""} onChange={handleFormChange} fullWidth />
+          <TextField aria-label="input field" margin="dense" label={t('general.ownership_category') || 'فئة الملكية'} name="ownership_category" value={form.ownership_category || ""} onChange={handleFormChange} fullWidth />
+          <TextField aria-label="input field" margin="dense" label={t('general.total_workers') || 'إجمالي العمال'} name="total_workers" type="number" value={form.total_workers || ""} onChange={handleFormChange} fullWidth />
+          <TextField aria-label="input field" margin="dense" label={t('general.total_licenses') || 'إجمالي التراخيص'} name="total_licenses" type="number" value={form.total_licenses || ""} onChange={handleFormChange} fullWidth />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog}>{t('general.cancel')}</Button>
@@ -427,9 +426,9 @@ const CompaniesPage: React.FC = () => {
               <MenuItem value="passport">{t('passport')}</MenuItem>
             </Select>
           </FormControl>
-          <TextField fullWidth label="نص الإشعار" sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
-          <TextField fullWidth label="تاريخ انتهاء الإشعار (اختياري)" sx={{ mt: 2 }} type="date" InputLabelProps={{ shrink: true }} value={notifDate} onChange={e => setNotifDate(e.target.value)} />
-          <TextField fullWidth label="جدولة الإشعار (اختياري)" type="datetime-local" sx={{ mt: 2 }} InputLabelProps={{ shrink: true }} value={notifSchedule} onChange={e => setNotifSchedule(e.target.value)} />
+          <TextField aria-label="input field" fullWidth label="نص الإشعار" sx={{ mt: 2 }} value={notifMessage} onChange={e => setNotifMessage(e.target.value)} multiline rows={2} />
+          <TextField aria-label="input field" fullWidth label="تاريخ انتهاء الإشعار (اختياري)" sx={{ mt: 2 }} type="date" InputLabelProps={{ shrink: true }} value={notifDate} onChange={e => setNotifDate(e.target.value)} />
+          <TextField aria-label="input field" fullWidth label="جدولة الإشعار (اختياري)" type="datetime-local" sx={{ mt: 2 }} InputLabelProps={{ shrink: true }} value={notifSchedule} onChange={e => setNotifSchedule(e.target.value)} />
           <FormControl fullWidth sx={{ mt: 2 }}>
             <InputLabel>رمز (اختياري)</InputLabel>
             <Select value={notifIcon} label="رمز (اختياري)" onChange={e => setNotifIcon(e.target.value)} disabled={!!notifEmoji}>
@@ -461,7 +460,7 @@ const CompaniesPage: React.FC = () => {
               <MenuItem value="🔔">🔔 {t('notification')}</MenuItem>
             </Select>
           </FormControl>
-          <TextField label="إيموجي مخصص" value={notifEmoji} onChange={e => setNotifEmoji(e.target.value)} inputProps={{ maxLength: 2, style: { fontSize: 24, textAlign: 'center' } }} sx={{ width: 80, mt: 2 }} disabled={!!notifIcon} placeholder="😊" />
+          <TextField aria-label="input field" label="إيموجي مخصص" value={notifEmoji} onChange={e => setNotifEmoji(e.target.value)} inputProps={{ maxLength: 2, style: { fontSize: 24, textAlign: 'center' } }} sx={{ width: 80, mt: 2 }} disabled={!!notifIcon} placeholder="😊" />
           <Box display="flex" alignItems="center" gap={1} mt={2}>
             <FormControl sx={{ minWidth: 100 }}>
               <InputLabel>لون مخصص</InputLabel>

@@ -1,0 +1,902 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Tab,
+  Tabs,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Chip,
+  IconButton,
+  MenuItem,
+  Alert,
+  LinearProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  FormControlLabel,
+  Checkbox
+} from '@mui/material';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Visibility as ViewIcon,
+  Warning as WarningIcon,
+  CheckCircle as CheckIcon,
+  Person as PersonIcon,
+  Schedule as ScheduleIcon
+} from '@mui/icons-material';
+
+interface MedicalFile {
+  id: number;
+  worker_id: number;
+  file_number: string;
+  blood_type?: string;
+  height?: number;
+  weight?: number;
+  emergency_contact_name?: string;
+  emergency_contact_phone?: string;
+  emergency_contact_relation?: string;
+  chronic_diseases?: string;
+  allergies?: string;
+  medications?: string;
+  medical_insurance_number?: string;
+  medical_insurance_provider?: string;
+  last_checkup_date?: string;
+  next_checkup_due?: string;
+  fitness_for_work: boolean;
+  notes?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+interface MedicalRecord {
+  id: number;
+  medical_file_id: number;
+  record_type: string;
+  record_date: string;
+  doctor_name?: string;
+  hospital_clinic?: string;
+  diagnosis?: string;
+  treatment?: string;
+  prescribed_medications?: string;
+  follow_up_required: boolean;
+  follow_up_date?: string;
+  work_restriction: boolean;
+  restriction_details?: string;
+  restriction_start_date?: string;
+  restriction_end_date?: string;
+  cost: number;
+  insurance_covered: boolean;
+  notes?: string;
+  created_at: string;
+}
+
+interface HealthAndSafetyIncident {
+  id: number;
+  worker_id: number;
+  incident_date: string;
+  incident_type: string;
+  severity: string;
+  location: string;
+  description: string;
+  immediate_action_taken?: string;
+  medical_attention_required: boolean;
+  medical_facility?: string;
+  time_off_work: number;
+  investigation_required: boolean;
+  investigation_completed: boolean;
+  investigation_findings?: string;
+  preventive_measures?: string;
+  reported_by?: string;
+  status: string;
+  created_at: string;
+}
+
+interface MedicalCheckupSchedule {
+  id: number;
+  worker_id: number;
+  checkup_type: string;
+  scheduled_date: string;
+  completed: boolean;
+  completed_date?: string;
+  doctor_name?: string;
+  facility?: string;
+  cost: number;
+  results_summary?: string;
+  fit_for_work?: boolean;
+  restrictions?: string;
+  next_checkup_due?: string;
+  reminder_sent: boolean;
+  notes?: string;
+  created_at: string;
+}
+
+interface HealthStatistics {
+  total_workers_with_medical_files: number;
+  fit_for_work_count: number;
+  workers_with_restrictions: number;
+  overdue_checkups: number;
+  recent_incidents: number;
+  total_incidents_this_month: number;
+  incident_types_breakdown: Record<string, number>;
+  severity_breakdown: Record<string, number>;
+  average_time_off_per_incident: number;
+}
+
+const MedicalFilesManagementPage: React.FC = () => {
+  const [activeTab, setActiveTab] = useState(0);
+  const [medicalFiles, setMedicalFiles] = useState<MedicalFile[]>([]);
+  const [medicalRecords, setMedicalRecords] = useState<MedicalRecord[]>([]);
+  const [incidents, setIncidents] = useState<HealthAndSafetyIncident[]>([]);
+  const [checkups, setCheckups] = useState<MedicalCheckupSchedule[]>([]);
+  const [statistics, setStatistics] = useState<HealthStatistics | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  // Dialog states
+  const [openFileDialog, setOpenFileDialog] = useState(false);
+  const [openRecordDialog, setOpenRecordDialog] = useState(false);
+  const [openIncidentDialog, setOpenIncidentDialog] = useState(false);
+  const [openCheckupDialog, setOpenCheckupDialog] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<MedicalFile | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<MedicalRecord | null>(null);
+  const [selectedIncident, setSelectedIncident] = useState<HealthAndSafetyIncident | null>(null);
+  const [selectedCheckup, setSelectedCheckupSchedule] = useState<MedicalCheckupSchedule | null>(null);
+
+  // Form states
+  const [fileForm, setFileForm] = useState<Partial<MedicalFile>>({});
+  const [recordForm, setRecordForm] = useState<Partial<MedicalRecord>>({});
+  const [incidentForm, setIncidentForm] = useState<Partial<HealthAndSafetyIncident>>({});
+  const [checkupForm, setCheckupForm] = useState<Partial<MedicalCheckupSchedule>>({});
+
+  const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const recordTypes = ['checkup', 'injury', 'illness', 'vaccination', 'surgery'];
+  const incidentTypes = ['injury', 'near_miss', 'illness', 'accident'];
+  const severityLevels = ['minor', 'moderate', 'major', 'fatal'];
+  const checkupTypes = ['annual', 'pre_employment', 'return_to_work', 'periodic'];
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        loadMedicalFiles(),
+        loadStatistics(),
+        loadOverdueCheckups(),
+        loadRecentIncidents()
+      ]);
+    } catch (err) {
+      setError('حدث خطأ في تحميل البيانات');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMedicalFiles = async () => {
+    try {
+      const response = await fetch('/api/medical/files/');
+      if (!response.ok) throw new Error('فشل في تحميل الملفات الطبية');
+      const data = await response.json();
+      setMedicalFiles(data);
+    } catch (err) {
+      console.error('Error loading medical files:', err);
+    }
+  };
+
+  const loadStatistics = async () => {
+    try {
+      const response = await fetch('/api/medical/statistics/health/');
+      if (!response.ok) throw new Error('فشل في تحميل الإحصائيات');
+      const data = await response.json();
+      setStatistics(data);
+    } catch (err) {
+      console.error('Error loading statistics:', err);
+    }
+  };
+
+  const loadOverdueCheckups = async () => {
+    try {
+      const response = await fetch('/api/medical/checkups/overdue/');
+      if (!response.ok) throw new Error('فشل في تحميل الفحوصات المتأخرة');
+      const data = await response.json();
+      setCheckups(data);
+    } catch (err) {
+      console.error('Error loading overdue checkups:', err);
+    }
+  };
+
+  const loadRecentIncidents = async () => {
+    try {
+      const response = await fetch('/api/medical/incidents/recent/');
+      if (!response.ok) throw new Error('فشل في تحميل الحوادث الأخيرة');
+      const data = await response.json();
+      setIncidents(data);
+    } catch (err) {
+      console.error('Error loading recent incidents:', err);
+    }
+  };
+
+  const handleCreateFile = async () => {
+    try {
+      const response = await fetch('/api/medical/files/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fileForm)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'فشل في إنشاء الملف الطبي');
+      }
+      
+      setSuccess('تم إنشاء الملف الطبي بنجاح');
+      setOpenFileDialog(false);
+      setFileForm({});
+      loadMedicalFiles();
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleUpdateFile = async () => {
+    if (!selectedFile) return;
+    
+    try {
+      const response = await fetch(`/api/medical/files/${selectedFile.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(fileForm)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'فشل في تحديث الملف الطبي');
+      }
+      
+      setSuccess('تم تحديث الملف الطبي بنجاح');
+      setOpenFileDialog(false);
+      setSelectedFile(null);
+      setFileForm({});
+      loadMedicalFiles();
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const handleCreateRecord = async () => {
+    try {
+      const response = await fetch('/api/medical/records/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(recordForm)
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'فشل في إنشاء السجل الطبي');
+      }
+      
+      setSuccess('تم إنشاء السجل الطبي بنجاح');
+      setOpenRecordDialog(false);
+      setRecordForm({});
+      loadMedicalRecords();
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
+  const loadMedicalRecords = async () => {
+    if (!selectedFile) return;
+    
+    try {
+      const response = await fetch(`/api/medical/records/file/${selectedFile.id}`);
+      if (!response.ok) throw new Error('فشل في تحميل السجلات الطبية');
+      const data = await response.json();
+      setMedicalRecords(data);
+    } catch (err) {
+      console.error('Error loading medical records:', err);
+    }
+  };
+
+  const openEditFileDialog = (file: MedicalFile) => {
+    setSelectedFile(file);
+    setFileForm(file);
+    setOpenFileDialog(true);
+  };
+
+  const openNewFileDialog = () => {
+    setSelectedFile(null);
+    setFileForm({});
+    setOpenFileDialog(true);
+  };
+
+  const openNewRecordDialog = (medicalFileId: number) => {
+    setSelectedRecord(null);
+    setRecordForm({ medical_file_id: medicalFileId });
+    setOpenRecordDialog(true);
+  };
+
+  const renderStatistics = () => {
+    if (!statistics) return null;
+
+    return (
+      <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <PersonIcon color="primary" sx={{ mr: 1 }} />
+                <Box>
+                  <Typography variant="h6">{statistics.total_workers_with_medical_files}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    إجمالي الملفات الطبية
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <CheckIcon color="success" sx={{ mr: 1 }} />
+                <Box>
+                  <Typography variant="h6">{statistics.fit_for_work_count}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    لائق للعمل
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <WarningIcon color="warning" sx={{ mr: 1 }} />
+                <Box>
+                  <Typography variant="h6">{statistics.workers_with_restrictions}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    لديهم قيود عمل
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+        
+        <Grid item xs={12} sm={6} md={3}>
+          <Card>
+            <CardContent>
+              <Box display="flex" alignItems="center">
+                <ScheduleIcon color="error" sx={{ mr: 1 }} />
+                <Box>
+                  <Typography variant="h6">{statistics.overdue_checkups}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    فحوصات متأخرة
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    );
+  };
+
+  const renderMedicalFiles = () => (
+    <Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h6">الملفات الطبية</Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={openNewFileDialog}
+        >
+          ملف طبي جديد
+        </Button>
+      </Box>
+
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>رقم الملف</TableCell>
+              <TableCell>فصيلة الدم</TableCell>
+              <TableCell>آخر فحص</TableCell>
+              <TableCell>الفحص القادم</TableCell>
+              <TableCell>اللياقة للعمل</TableCell>
+              <TableCell>الإجراءات</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {medicalFiles.map((file) => (
+              <TableRow key={file.id}>
+                <TableCell>{file.file_number}</TableCell>
+                <TableCell>{file.blood_type || '-'}</TableCell>
+                <TableCell>{file.last_checkup_date || '-'}</TableCell>
+                <TableCell>{file.next_checkup_due || '-'}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={file.fitness_for_work ? 'لائق' : 'غير لائق'}
+                    color={file.fitness_for_work ? 'success' : 'error'}
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton
+                    size="small"
+                    onClick={() => openEditFileDialog(file)}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => {
+                      setSelectedFile(file);
+                      loadMedicalRecords();
+                    }}
+                  >
+                    <ViewIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+
+  const renderMedicalRecords = () => (
+    <Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h6">
+          السجلات الطبية {selectedFile && `- ${selectedFile.file_number}`}
+        </Typography>
+        {selectedFile && (
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => openNewRecordDialog(selectedFile.id)}
+          >
+            سجل طبي جديد
+          </Button>
+        )}
+      </Box>
+
+      {selectedFile ? (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>التاريخ</TableCell>
+                <TableCell>النوع</TableCell>
+                <TableCell>الطبيب</TableCell>
+                <TableCell>التشخيص</TableCell>
+                <TableCell>قيود العمل</TableCell>
+                <TableCell>الإجراءات</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {medicalRecords.map((record) => (
+                <TableRow key={record.id}>
+                  <TableCell>{record.record_date}</TableCell>
+                  <TableCell>{record.record_type}</TableCell>
+                  <TableCell>{record.doctor_name || '-'}</TableCell>
+                  <TableCell>{record.diagnosis || '-'}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={record.work_restriction ? 'نعم' : 'لا'}
+                      color={record.work_restriction ? 'warning' : 'default'}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <IconButton size="small">
+                      <EditIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <Alert severity="info">
+          يرجى اختيار ملف طبي لعرض السجلات
+        </Alert>
+      )}
+    </Box>
+  );
+
+  const renderIncidents = () => (
+    <Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h6">حوادث الصحة والسلامة</Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setOpenIncidentDialog(true)}
+        >
+          حادث جديد
+        </Button>
+      </Box>
+
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>التاريخ</TableCell>
+              <TableCell>النوع</TableCell>
+              <TableCell>الخطورة</TableCell>
+              <TableCell>الموقع</TableCell>
+              <TableCell>أيام الإجازة</TableCell>
+              <TableCell>الحالة</TableCell>
+              <TableCell>الإجراءات</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {incidents.map((incident) => (
+              <TableRow key={incident.id}>
+                <TableCell>
+                  {new Date(incident.incident_date).toLocaleDateString('ar-EG')}
+                </TableCell>
+                <TableCell>{incident.incident_type}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={incident.severity}
+                    color={
+                      incident.severity === 'fatal' ? 'error' :
+                      incident.severity === 'major' ? 'warning' :
+                      incident.severity === 'moderate' ? 'info' : 'default'
+                    }
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell>{incident.location}</TableCell>
+                <TableCell>{incident.time_off_work}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={incident.status}
+                    color={incident.status === 'closed' ? 'success' : 'warning'}
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton size="small">
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+
+  const renderCheckups = () => (
+    <Box>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h6">جدولة الفحوصات الطبية</Typography>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setOpenCheckupDialog(true)}
+        >
+          فحص جديد
+        </Button>
+      </Box>
+
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>التاريخ المجدول</TableCell>
+              <TableCell>النوع</TableCell>
+              <TableCell>المنشأة</TableCell>
+              <TableCell>الطبيب</TableCell>
+              <TableCell>مكتمل</TableCell>
+              <TableCell>الإجراءات</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {checkups.map((checkup) => (
+              <TableRow key={checkup.id}>
+                <TableCell>{checkup.scheduled_date}</TableCell>
+                <TableCell>{checkup.checkup_type}</TableCell>
+                <TableCell>{checkup.facility || '-'}</TableCell>
+                <TableCell>{checkup.doctor_name || '-'}</TableCell>
+                <TableCell>
+                  <Chip
+                    label={checkup.completed ? 'نعم' : 'لا'}
+                    color={checkup.completed ? 'success' : 'warning'}
+                    size="small"
+                  />
+                </TableCell>
+                <TableCell>
+                  <IconButton size="small">
+                    <EditIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+
+  const renderFileDialog = () => (
+    <Dialog open={openFileDialog} onClose={() => setOpenFileDialog(false)} maxWidth="md" fullWidth>
+      <DialogTitle>
+        {selectedFile ? 'تعديل الملف الطبي' : 'ملف طبي جديد'}
+      </DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          <Grid item xs={12} sm={6}>
+            <TextField aria-label="input field" fullWidth
+              label="معرف العامل"
+              type="number"
+              value={fileForm.worker_id || ''}
+              onChange={(e) => setFileForm({ ...fileForm, worker_id: parseInt(e.target.value) })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField aria-label="input field" fullWidth
+              label="رقم الملف"
+              value={fileForm.file_number || ''}
+              onChange={(e) => setFileForm({ ...fileForm, file_number: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>فصيلة الدم</InputLabel>
+              <Select
+                value={fileForm.blood_type || ''}
+                onChange={(e) => setFileForm({ ...fileForm, blood_type: e.target.value })}
+              >
+                {bloodTypes.map(type => (
+                  <MenuItem key={type} value={type}>{type}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField aria-label="input field" fullWidth
+              label="الطول (سم)"
+              type="number"
+              value={fileForm.height || ''}
+              onChange={(e) => setFileForm({ ...fileForm, height: parseFloat(e.target.value) })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <TextField aria-label="input field" fullWidth
+              label="الوزن (كغ)"
+              type="number"
+              value={fileForm.weight || ''}
+              onChange={(e) => setFileForm({ ...fileForm, weight: parseFloat(e.target.value) })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField aria-label="input field" fullWidth
+              label="اسم جهة الاتصال الطارئ"
+              value={fileForm.emergency_contact_name || ''}
+              onChange={(e) => setFileForm({ ...fileForm, emergency_contact_name: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField aria-label="input field" fullWidth
+              label="هاتف جهة الاتصال الطارئ"
+              value={fileForm.emergency_contact_phone || ''}
+              onChange={(e) => setFileForm({ ...fileForm, emergency_contact_phone: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField aria-label="input field" fullWidth
+              label="الأمراض المزمنة"
+              multiline
+              rows={3}
+              value={fileForm.chronic_diseases || ''}
+              onChange={(e) => setFileForm({ ...fileForm, chronic_diseases: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField aria-label="input field" fullWidth
+              label="الحساسية"
+              multiline
+              rows={2}
+              value={fileForm.allergies || ''}
+              onChange={(e) => setFileForm({ ...fileForm, allergies: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={fileForm.fitness_for_work || false}
+                  onChange={(e) => setFileForm({ ...fileForm, fitness_for_work: e.target.checked })}
+                />
+              }
+              label="لائق للعمل"
+            />
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setOpenFileDialog(false)}>إلغاء</Button>
+        <Button
+          variant="contained"
+          onClick={selectedFile ? handleUpdateFile : handleCreateFile}
+        >
+          {selectedFile ? 'تحديث' : 'إنشاء'}
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
+  const renderRecordDialog = () => (
+    <Dialog open={openRecordDialog} onClose={() => setOpenRecordDialog(false)} maxWidth="md" fullWidth>
+      <DialogTitle>سجل طبي جديد</DialogTitle>
+      <DialogContent>
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>نوع السجل</InputLabel>
+              <Select
+                value={recordForm.record_type || ''}
+                onChange={(e) => setRecordForm({ ...recordForm, record_type: e.target.value })}
+              >
+                {recordTypes.map(type => (
+                  <MenuItem key={type} value={type}>{type}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField aria-label="input field" fullWidth
+              label="التاريخ"
+              type="date"
+              value={recordForm.record_date || ''}
+              onChange={(e) => setRecordForm({ ...recordForm, record_date: e.target.value })}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField aria-label="input field" fullWidth
+              label="اسم الطبيب"
+              value={recordForm.doctor_name || ''}
+              onChange={(e) => setRecordForm({ ...recordForm, doctor_name: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField aria-label="input field" fullWidth
+              label="المستشفى/العيادة"
+              value={recordForm.hospital_clinic || ''}
+              onChange={(e) => setRecordForm({ ...recordForm, hospital_clinic: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField aria-label="input field" fullWidth
+              label="التشخيص"
+              multiline
+              rows={3}
+              value={recordForm.diagnosis || ''}
+              onChange={(e) => setRecordForm({ ...recordForm, diagnosis: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField aria-label="input field" fullWidth
+              label="العلاج"
+              multiline
+              rows={3}
+              value={recordForm.treatment || ''}
+              onChange={(e) => setRecordForm({ ...recordForm, treatment: e.target.value })}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={recordForm.follow_up_required || false}
+                  onChange={(e) => setRecordForm({ ...recordForm, follow_up_required: e.target.checked })}
+                />
+              }
+              label="يحتاج متابعة"
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={recordForm.work_restriction || false}
+                  onChange={(e) => setRecordForm({ ...recordForm, work_restriction: e.target.checked })}
+                />
+              }
+              label="قيود على العمل"
+            />
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => setOpenRecordDialog(false)}>إلغاء</Button>
+        <Button variant="contained" onClick={handleCreateRecord}>
+          إنشاء
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+
+  return (
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" sx={{ mb: 3 }}>
+        إدارة الملفات الطبية
+      </Typography>
+
+      {loading && <LinearProgress sx={{ mb: 2 }} />}
+      
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError(null)}>
+          {error}
+        </Alert>
+      )}
+      
+      {success && (
+        <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess(null)}>
+          {success}
+        </Alert>
+      )}
+
+      {renderStatistics()}
+
+      <Card>
+        <Tabs
+          value={activeTab}
+          onChange={(_, newValue) => setActiveTab(newValue)}
+          sx={{ borderBottom: 1, borderColor: 'divider' }}
+        >
+          <Tab label="الملفات الطبية" />
+          <Tab label="السجلات الطبية" />
+          <Tab label="حوادث الصحة والسلامة" />
+          <Tab label="جدولة الفحوصات" />
+        </Tabs>
+
+        <CardContent>
+          {activeTab === 0 && renderMedicalFiles()}
+          {activeTab === 1 && renderMedicalRecords()}
+          {activeTab === 2 && renderIncidents()}
+          {activeTab === 3 && renderCheckups()}
+        </CardContent>
+      </Card>
+
+      {renderFileDialog()}
+      {renderRecordDialog()}
+    </Box>
+  );
+};
+
+export default MedicalFilesManagementPage;

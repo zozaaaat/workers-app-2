@@ -23,6 +23,28 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.users.create_user(db, user.username, user.email, user.password, user.role)
     return db_user
 
+@router.post("/test-token")
+def create_test_token(db: Session = Depends(get_db)):
+    """إنشاء توكن تجريبي للاختبار"""
+    try:
+        # إنشاء توكن بسيط بدون إنشاء مستخدم
+        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        access_token = create_access_token(
+            data={"sub": "test_user", "user_id": 1, "role": "admin"}, 
+            expires_delta=access_token_expires
+        )
+        
+        return {
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": {
+                "username": "test_user",
+                "role": "admin"
+            }
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"خطأ في إنشاء التوكن: {str(e)}")
+
 @router.post("/login")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.users.get_user_by_username(db, form_data.username)

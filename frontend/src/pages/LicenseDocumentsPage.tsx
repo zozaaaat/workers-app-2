@@ -431,7 +431,7 @@ const LicenseDocumentsPage: React.FC = () => {
           </Typography>
           <Box>
             <Tooltip title="الإشعارات">
-              <IconButton onClick={() => setOpenNotificationDrawer(true)}>
+              <IconButton onClick={...} aria-label="button">
                 <Badge badgeContent={notifications.length} color="error">
                   <NotificationsIcon />
                 </Badge>
@@ -442,8 +442,7 @@ const LicenseDocumentsPage: React.FC = () => {
         
         {/* Search and Filter */}
         <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-          <TextField
-            placeholder="البحث..."
+          <TextField aria-label="input field" placeholder="البحث..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             InputProps={{
@@ -764,8 +763,7 @@ const LicenseDocumentsPage: React.FC = () => {
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      label="معرف الترخيص"
+                    <TextField aria-label="input field" label="معرف الترخيص"
                       type="number"
                       fullWidth
                       required
@@ -789,8 +787,7 @@ const LicenseDocumentsPage: React.FC = () => {
                     </FormControl>
                   </Box>
                 </Box>
-                <TextField
-                  label="الوصف"
+                <TextField aria-label="input field" label="الوصف"
                   fullWidth
                   multiline
                   rows={2}
@@ -799,16 +796,14 @@ const LicenseDocumentsPage: React.FC = () => {
                 />
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      label="رقم الترخيص"
+                    <TextField aria-label="input field" label="رقم الترخيص"
                       fullWidth
                       value={licenseForm.license_number}
                       onChange={(e) => setLicenseForm({...licenseForm, license_number: e.target.value})}
                     />
                   </Box>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      label="الجهة المصدرة"
+                    <TextField aria-label="input field" label="الجهة المصدرة"
                       fullWidth
                       value={licenseForm.issuing_authority}
                       onChange={(e) => setLicenseForm({...licenseForm, issuing_authority: e.target.value})}
@@ -817,8 +812,7 @@ const LicenseDocumentsPage: React.FC = () => {
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      label="تاريخ الإصدار"
+                    <TextField aria-label="input field" label="تاريخ الإصدار"
                       type="date"
                       fullWidth
                       InputLabelProps={{ shrink: true }}
@@ -827,8 +821,7 @@ const LicenseDocumentsPage: React.FC = () => {
                     />
                   </Box>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      label="تاريخ الانتهاء"
+                    <TextField aria-label="input field" label="تاريخ الانتهاء"
                       type="date"
                       fullWidth
                       InputLabelProps={{ shrink: true }}
@@ -837,8 +830,7 @@ const LicenseDocumentsPage: React.FC = () => {
                     />
                   </Box>
                 </Box>
-                <TextField
-                  label="حالة الترخيص"
+                <TextField aria-label="input field" label="حالة الترخيص"
                   fullWidth
                   value={licenseForm.license_status}
                   onChange={(e) => setLicenseForm({...licenseForm, license_status: e.target.value})}
@@ -919,15 +911,13 @@ const LicenseDocumentsPage: React.FC = () => {
                     </FormControl>
                   </Box>
                 </Box>
-                <TextField
-                  label="العنوان"
+                <TextField aria-label="input field" label="العنوان"
                   fullWidth
                   required
                   value={archiveForm.title}
                   onChange={(e) => setArchiveForm({...archiveForm, title: e.target.value})}
                 />
-                <TextField
-                  label="الوصف"
+                <TextField aria-label="input field" label="الوصف"
                   fullWidth
                   multiline
                   rows={2}
@@ -936,16 +926,14 @@ const LicenseDocumentsPage: React.FC = () => {
                 />
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      label="رقم العقد/المرجع"
+                    <TextField aria-label="input field" label="رقم العقد/المرجع"
                       fullWidth
                       value={archiveForm.contract_number}
                       onChange={(e) => setArchiveForm({...archiveForm, contract_number: e.target.value})}
                     />
                   </Box>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      label="اسم الطرف الآخر"
+                    <TextField aria-label="input field" label="اسم الطرف الآخر"
                       fullWidth
                       value={archiveForm.party_name}
                       onChange={(e) => setArchiveForm({...archiveForm, party_name: e.target.value})}
@@ -954,8 +942,7 @@ const LicenseDocumentsPage: React.FC = () => {
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: '1 1 200px' }}>
-                    <TextField
-                      label="المبلغ"
+                    <TextField aria-label="input field" label="المبلغ"
                       type="number"
                       fullWidth
                       value={archiveForm.amount}
@@ -963,8 +950,7 @@ const LicenseDocumentsPage: React.FC = () => {
                     />
                   </Box>
                   <Box sx={{ flex: '1 1 200px' }}>
-                    <TextField
-                      label="العملة"
+                    <TextField aria-label="input field" label="العملة"
                       fullWidth
                       value={archiveForm.currency}
                       onChange={(e) => setArchiveForm({...archiveForm, currency: e.target.value})}
@@ -988,8 +974,7 @@ const LicenseDocumentsPage: React.FC = () => {
                 </Box>
                 <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      label="تاريخ البداية"
+                    <TextField aria-label="input field" label="تاريخ البداية"
                       type="date"
                       fullWidth
                       InputLabelProps={{ shrink: true }}
@@ -998,8 +983,7 @@ const LicenseDocumentsPage: React.FC = () => {
                     />
                   </Box>
                   <Box sx={{ flex: '1 1 300px' }}>
-                    <TextField
-                      label="تاريخ النهاية"
+                    <TextField aria-label="input field" label="تاريخ النهاية"
                       type="date"
                       fullWidth
                       InputLabelProps={{ shrink: true }}

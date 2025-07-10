@@ -15,12 +15,12 @@ class AbsenceUpdate(AbsenceBase):
     pass
 
 class AbsenceInDB(AbsenceBase):
+    model_config = {"from_attributes": True}
     id: int
     deduction_id: Optional[int]
-    class Config:
-        orm_mode = True
 
 class AbsenceOut(BaseModel):
+    model_config = {"from_attributes": True}
     id: int
     worker_id: int
     date: date

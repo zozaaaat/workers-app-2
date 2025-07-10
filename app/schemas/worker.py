@@ -3,6 +3,8 @@ from typing import Optional
 from datetime import date
 
 class WorkerBase(BaseModel):
+    model_config = {"from_attributes": True}
+
     civil_id: str
     name: Optional[str]
     nationality: Optional[str]
@@ -14,11 +16,8 @@ class WorkerBase(BaseModel):
     salary: Optional[float]
     custom_id: Optional[str] = None
 
-    class Config:
-        orm_mode = True
-        from_attributes = True
-
 class WorkerCreate(WorkerBase):
+    model_config = {"from_attributes": True}
     civil_id: str
     name: str
     nationality: str
@@ -44,26 +43,16 @@ class WorkerUpdate(BaseModel):
     company_id: Optional[int] = None
     license_id: Optional[int] = None
 
-    class Config:
-        orm_mode = True
-        from_attributes = True
-
 class Worker(WorkerBase):
+    model_config = {"from_attributes": True}
     id: int
     company_id: int
     license_id: Optional[int] = None
     custom_id: Optional[str] = None  # تأكيد ظهور الحقل في Worker النهائي
 
-    class Config:
-        orm_mode = True
-        from_attributes = True
-
 class WorkerOut(BaseModel):
+    model_config = {"from_attributes": True}
     id: int
     civil_id: str
     name: Optional[str]
     custom_id: Optional[str]
-
-    class Config:
-        orm_mode = True
-        from_attributes = True

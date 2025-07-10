@@ -48,8 +48,6 @@ class LicenseUpdate(BaseModel):
         "from_attributes": True,
         "arbitrary_types_allowed": True,
     }
-    class Config:
-        orm_mode = True
 
 class License(LicenseBase):
     id: int
@@ -59,5 +57,3 @@ class License(LicenseBase):
     model_config = {
         "from_attributes": True
     }
-    class Config:
-        orm_mode = True

@@ -2,8 +2,8 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-// إضافة دعم للخطوط العربية - سنحتاج لإضافة هذا لاحقاً
-// import './fonts/NotoSansArabic-normal';
+// دعم الخطوط العربية
+import '@fontsource/noto-sans-arabic';
 
 export interface ExportOptions {
   format: 'excel' | 'pdf';
@@ -11,6 +11,7 @@ export interface ExportOptions {
   title?: string;
   includeDate?: boolean;
   includeStats?: boolean;
+  rtl?: boolean;
 }
 
 export interface ExportColumn {
@@ -86,12 +87,12 @@ export class ExportService {
   }
 
   /**
-   * تصدير البيانات إلى PDF
+   * تصدير البيانات إلى PDF مع دعم أفضل للعربية
    */
   static exportToPDF(
     data: any[],
     columns: ExportColumn[],
-    options: ExportOptions = { format: 'pdf' }
+    options: ExportOptions = { format: 'pdf', rtl: true }
   ): void {
     const filename = options.filename || `export_${new Date().toISOString().split('T')[0]}.pdf`;
     
@@ -102,28 +103,41 @@ export class ExportService {
       format: 'a4'
     });
 
-    // إعداد الخط العربي (سنحتاج لإضافة الخطوط لاحقاً)
-    // doc.setFont('NotoSansArabic');
-
+    // إعداد النص للغة العربية
+    const isRTL = options.rtl !== false;
     let yPosition = 20;
 
     // إضافة العنوان
     if (options.title) {
-      doc.setFontSize(16);
-      doc.text(options.title, 20, yPosition, { align: 'right' });
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      const titleX = isRTL ? 277 : 20; // 297 - 20 = 277 للنص من اليمين
+      doc.text(options.title, titleX, yPosition, { 
+        align: isRTL ? 'right' : 'left',
+        lang: 'ar'
+      });
       yPosition += 15;
     }
 
     // إضافة التاريخ
     if (options.includeDate) {
       doc.setFontSize(12);
-      doc.text(`تاريخ التصدير: ${new Date().toLocaleDateString('ar-SA')}`, 20, yPosition, { align: 'right' });
+      doc.setFont('helvetica', 'normal');
+      const dateText = `تاريخ التصدير: ${new Date().toLocaleDateString('ar-SA')}`;
+      const dateX = isRTL ? 277 : 20;
+      doc.text(dateText, dateX, yPosition, { 
+        align: isRTL ? 'right' : 'left' 
+      });
       yPosition += 10;
     }
 
     // إضافة الإحصائيات
     if (options.includeStats) {
-      doc.text(`إجمالي السجلات: ${data.length}`, 20, yPosition, { align: 'right' });
+      const statsText = `إجمالي السجلات: ${data.length}`;
+      const statsX = isRTL ? 277 : 20;
+      doc.text(statsText, statsX, yPosition, { 
+        align: isRTL ? 'right' : 'left' 
+      });
       yPosition += 15;
     }
 
@@ -131,31 +145,50 @@ export class ExportService {
     const tableData = data.map(row => {
       return columns.map(column => {
         const value = this.getNestedValue(row, column.key);
-        return column.format ? column.format(value) : (value || '');
+        return column.format ? column.format(value) : (value?.toString() || '');
       });
     });
 
-    // إضافة الجدول
+    // إضافة الجدول مع تحسين العربية
     (doc as any).autoTable({
       head: [columns.map(col => col.label)],
       body: tableData,
       startY: yPosition,
       styles: {
-        // font: 'NotoSansArabic', // سنضيف هذا لاحقاً
         fontSize: 10,
-        cellPadding: 3,
-        halign: 'right'
+        cellPadding: 4,
+        halign: isRTL ? 'right' : 'left',
+        font: 'helvetica',
+        lineColor: [200, 200, 200],
+        lineWidth: 0.1
       },
       headStyles: {
-        fillColor: [41, 128, 185],
+        fillColor: [52, 152, 219],
         textColor: 255,
-        fontStyle: 'bold'
+        fontStyle: 'bold',
+        halign: isRTL ? 'right' : 'left'
       },
       alternateRowStyles: {
-        fillColor: [245, 245, 245]
+        fillColor: [248, 249, 250]
       },
+      tableLineColor: [200, 200, 200],
+      tableLineWidth: 0.1,
       margin: { top: 20, right: 20, bottom: 20, left: 20 }
     });
+
+    // إضافة footer
+    const pageCount = (doc as any).internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      const footerText = `صفحة ${i} من ${pageCount}`;
+      doc.text(footerText, 148, 200, { align: 'center' });
+      
+      // إضافة تاريخ ووقت الإنشاء
+      const timestamp = new Date().toLocaleString('ar-SA');
+      doc.text(`تم الإنشاء في: ${timestamp}`, 277, 200, { align: 'right' });
+    }
 
     // حفظ الملف
     doc.save(filename);

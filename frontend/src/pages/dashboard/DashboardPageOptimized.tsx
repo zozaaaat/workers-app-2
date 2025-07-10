@@ -6,13 +6,13 @@
 import React, { memo, Suspense } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { queryClient } from '../services/api-optimized';
+import { queryClient } from '../../services/api-optimized';
 
 // Lazy load dashboard sections for better performance
-const DashboardStats = React.lazy(() => import('./dashboard/DashboardStats'));
-const DashboardNotifications = React.lazy(() => import('./dashboard/DashboardNotifications'));
-const DashboardQuickActions = React.lazy(() => import('./dashboard/DashboardQuickActions'));
-const DashboardExpiringDocs = React.lazy(() => import('./dashboard/DashboardExpiringDocs'));
+const DashboardStats = React.lazy(() => import('./DashboardStats'));
+const DashboardNotifications = React.lazy(() => import('./DashboardNotifications'));
+const DashboardQuickActions = React.lazy(() => import('./DashboardQuickActions'));
+const DashboardExpiringDocs = React.lazy(() => import('./DashboardExpiringDocs'));
 
 // Loading component
 const LoadingCard = memo(() => (
@@ -57,12 +57,14 @@ class ErrorBoundary extends React.Component<
 
 // Performance monitoring component
 const PerformanceMonitor = memo(() => {
-  if (process.env.NODE_ENV !== 'development') return null;
+  // Safe environment check
+  const isDev = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+  if (!isDev) return null;
 
   return (
     <div className="fixed bottom-4 right-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs">
       <div>React Query DevTools: متاح</div>
-      <div>البيئة: {process.env.NODE_ENV}</div>
+      <div>البيئة: development</div>
     </div>
   );
 });
@@ -120,7 +122,7 @@ const DashboardPageOptimized: React.FC = memo(() => {
       </div>
 
       {/* React Query DevTools */}
-      {process.env.NODE_ENV === 'development' && (
+      {typeof window !== 'undefined' && window.location.hostname === 'localhost' && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}
     </QueryClientProvider>
