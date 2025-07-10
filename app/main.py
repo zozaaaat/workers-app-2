@@ -1,6 +1,7 @@
 print("=== MAIN.PY LOADED ===")
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from typing import List
 from fastapi_utils.tasks import repeat_every
 from sqlalchemy.orm import Session
@@ -85,9 +86,8 @@ app.add_middleware(
 )
 
 # Performance optimization imports
-from fastapi.middleware.gzip import GZipMiddleware
-from app.services.cache_service import cache
-from app.crud.optimized_crud import OptimizedQueries
+# from app.services.cache_service import cache  # معلق مؤقتاً
+# from app.crud.optimized_crud import OptimizedQueries  # معلق مؤقتاً
 
 # تضمين جميع الراوترات
 app.include_router(companies.router, prefix="/companies", tags=["Companies"])
@@ -110,9 +110,9 @@ app.include_router(analytics.router)  # نظام التحليلات المتقد
 app.include_router(security.router)  # نظام الأمان المتقدم
 app.include_router(ai_analytics.router)  # نظام الذكاء الاصطناعي
 
-# Performance optimized routes
-from app.routers import dashboard_optimized
-app.include_router(dashboard_optimized.router, tags=["Dashboard Optimized"])
+# Performance optimized routes - معلق مؤقتاً بسبب redis
+# from app.routers import dashboard_optimized
+# app.include_router(dashboard_optimized.router, tags=["Dashboard Optimized"])
 
 @app.websocket("/ws/notifications")
 async def websocket_notifications(websocket: WebSocket):
