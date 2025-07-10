@@ -24,6 +24,7 @@ import EndOfServicePage from "./pages/end_of_service/EndOfServicePage";
 import AnalyticsDashboardPage from "./pages/AnalyticsDashboardPage";
 import SecurityPage from "./pages/SecurityPage";
 import AIAnalyticsPage from "./pages/AIAnalyticsPage";
+import ExportTestPage from "./pages/ExportTestPage";
 
 const TopBar: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -96,6 +97,7 @@ const App: React.FC = () => {
                   <Route path="/analytics" element={<AnalyticsDashboardPage />} />
                   <Route path="/security" element={isAdmin ? <SecurityPage /> : <Navigate to="/" />} />
                   <Route path="/ai-analytics" element={<AIAnalyticsPage />} />
+                  <Route path="/export-test" element={<ExportTestPage />} />
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </Box>

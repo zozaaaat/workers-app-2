@@ -8,6 +8,17 @@ export default defineConfig({
   
   // Performance optimizations
   build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: process.env.NODE_ENV === 'development',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    chunkSizeWarningLimit: 500,
     // Enable code splitting
     rollupOptions: {
       output: {
@@ -20,18 +31,6 @@ export default defineConfig({
         },
       },
     },
-    // Enable compression
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-    },
-    // Optimize chunk size
-    chunkSizeWarningLimit: 500,
-    // Enable source maps in development only
-    sourcemap: process.env.NODE_ENV === 'development',
   },
 
   server: {
@@ -56,29 +55,6 @@ export default defineConfig({
   css: {
     modules: {
       localsConvention: 'camelCaseOnly',
-    },
-  },
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    sourcemap: true,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-      format: {
-        comments: false,
-      },
-    },
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          react: ['react', 'react-dom', 'react-router-dom'],
-          vendor: ['axios'],
-        },
-      },
     },
   },
   optimizeDeps: {
