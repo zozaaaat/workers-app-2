@@ -104,7 +104,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
     try {
       // البحث في العمال
       const workers = await api.workers.getAll();
-      workers.forEach(worker => {
+      workers.forEach((worker: any) => {
         if (
           worker.name?.toLowerCase().includes(lowerQuery) ||
           worker.civil_id?.includes(query) ||
@@ -124,7 +124,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
 
       // البحث في الشركات
       const companies = await api.companies.getAll();
-      companies.forEach(company => {
+      companies.forEach((company: any) => {
         if (
           company.file_name?.toLowerCase().includes(lowerQuery) ||
           company.file_number?.includes(query) ||
@@ -143,7 +143,7 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({
 
       // البحث في التراخيص
       const licenses = await api.licenses.getAll();
-      licenses.forEach(license => {
+      licenses.forEach((license: any) => {
         if (
           license.name?.toLowerCase().includes(lowerQuery) ||
           license.license_number?.includes(query) ||

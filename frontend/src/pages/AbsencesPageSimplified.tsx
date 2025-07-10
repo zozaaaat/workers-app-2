@@ -18,7 +18,7 @@ import {
   EventBusy as AbsenceIcon,
   Person as PersonIcon,
   CalendarToday as CalendarIcon,
-  MonetizationOff as DeductionIcon
+  MoneyOff as DeductionIcon
 } from '@mui/icons-material';
 import UniversalDataTable from '../components/common/UniversalDataTable';
 import UniversalFormDialog from '../components/common/UniversalFormDialog';

@@ -17,7 +17,7 @@ import {
   Warning as ViolationIcon,
   Person as PersonIcon,
   CalendarToday as CalendarIcon,
-  MonetizationOff as PenaltyIcon
+  MoneyOff as PenaltyIcon
 } from '@mui/icons-material';
 import UniversalDataTable from '../components/common/UniversalDataTable';
 import UniversalFormDialog from '../components/common/UniversalFormDialog';

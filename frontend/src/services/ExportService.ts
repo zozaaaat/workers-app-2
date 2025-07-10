@@ -2,8 +2,8 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-// إضافة دعم للخطوط العربية
-import './fonts/NotoSansArabic-normal'; // سنحتاج لإضافة هذا لاحقاً
+// إضافة دعم للخطوط العربية - سنحتاج لإضافة هذا لاحقاً
+// import './fonts/NotoSansArabic-normal';
 
 export interface ExportOptions {
   format: 'excel' | 'pdf';
@@ -103,7 +103,7 @@ export class ExportService {
     });
 
     // إعداد الخط العربي (سنحتاج لإضافة الخطوط لاحقاً)
-    doc.setFont('NotoSansArabic');
+    // doc.setFont('NotoSansArabic');
 
     let yPosition = 20;
 
@@ -141,7 +141,7 @@ export class ExportService {
       body: tableData,
       startY: yPosition,
       styles: {
-        font: 'NotoSansArabic',
+        // font: 'NotoSansArabic', // سنضيف هذا لاحقاً
         fontSize: 10,
         cellPadding: 3,
         halign: 'right'

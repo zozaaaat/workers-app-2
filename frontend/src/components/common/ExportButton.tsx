@@ -26,7 +26,8 @@ import {
   Settings as SettingsIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
-import { ExportService, ExportColumn, ExportOptions } from '../services/ExportService';
+import { ExportService } from '../../services/ExportService';
+import type { ExportColumn, ExportOptions } from '../../services/ExportService';
 
 interface ExportButtonProps {
   data: any[];
@@ -344,7 +345,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({
                       setExportOptions({
                         ...exportOptions,
                         selectedColumns: isSelected
-                          ? exportOptions.selectedColumns.filter(key => key !== column.key)
+                          ? exportOptions.selectedColumns.filter((key: string) => key !== column.key)
                           : [...exportOptions.selectedColumns, column.key]
                       });
                     }}

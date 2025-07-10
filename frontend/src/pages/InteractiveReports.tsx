@@ -4,7 +4,6 @@ import {
   Card,
   CardContent,
   Typography,
-  Grid,
   Select,
   MenuItem,
   FormControl,
@@ -12,7 +11,6 @@ import {
   Button,
   Chip,
   LinearProgress,
-  Alert,
   Paper,
   Divider
 } from '@mui/material';
@@ -27,11 +25,7 @@ import {
   ResponsiveContainer,
   PieChart,
   Pie,
-  Cell,
-  LineChart,
-  Line,
-  Area,
-  AreaChart
+  Cell
 } from 'recharts';
 import {
   TrendingUp as TrendingUpIcon,
@@ -39,10 +33,9 @@ import {
   Business as BusinessIcon,
   Description as LicenseIcon,
   Assessment as ReportIcon,
-  DateRange as DateIcon,
   FileDownload as ExportIcon
 } from '@mui/icons-material';
-import { useApi } from '../../services/ApiService';
+import { useApi } from '../services/ApiService';
 
 interface ReportData {
   workers: any[];
@@ -238,211 +231,203 @@ const InteractiveReports: React.FC = () => {
       </Box>
 
       {/* الإحصائيات العامة */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <PeopleIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-                <Box>
-                  <Typography color="textSecondary" gutterBottom>
-                    إجمالي العمال
-                  </Typography>
-                  <Typography variant="h4">
-                    {generalStats.totalWorkers.toLocaleString()}
-                  </Typography>
-                </Box>
+      <Box sx={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+        gap: 3, 
+        mb: 4 
+      }}>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <PeopleIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+              <Box>
+                <Typography color="textSecondary" gutterBottom>
+                  إجمالي العمال
+                </Typography>
+                <Typography variant="h4">
+                  {generalStats.totalWorkers.toLocaleString()}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <BusinessIcon sx={{ fontSize: 40, color: 'secondary.main' }} />
-                <Box>
-                  <Typography color="textSecondary" gutterBottom>
-                    إجمالي الشركات
-                  </Typography>
-                  <Typography variant="h4">
-                    {generalStats.totalCompanies.toLocaleString()}
-                  </Typography>
-                </Box>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <BusinessIcon sx={{ fontSize: 40, color: 'secondary.main' }} />
+              <Box>
+                <Typography color="textSecondary" gutterBottom>
+                  إجمالي الشركات
+                </Typography>
+                <Typography variant="h4">
+                  {generalStats.totalCompanies.toLocaleString()}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <LicenseIcon sx={{ fontSize: 40, color: 'info.main' }} />
-                <Box>
-                  <Typography color="textSecondary" gutterBottom>
-                    إجمالي التراخيص
-                  </Typography>
-                  <Typography variant="h4">
-                    {generalStats.totalLicenses.toLocaleString()}
-                  </Typography>
-                </Box>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <LicenseIcon sx={{ fontSize: 40, color: 'info.main' }} />
+              <Box>
+                <Typography color="textSecondary" gutterBottom>
+                  إجمالي التراخيص
+                </Typography>
+                <Typography variant="h4">
+                  {generalStats.totalLicenses.toLocaleString()}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+            </Box>
+          </CardContent>
+        </Card>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <TrendingUpIcon sx={{ fontSize: 40, color: 'success.main' }} />
-                <Box>
-                  <Typography color="textSecondary" gutterBottom>
-                    متوسط العمال/شركة
-                  </Typography>
-                  <Typography variant="h4">
-                    {generalStats.averageWorkersPerCompany}
-                  </Typography>
-                </Box>
+        <Card>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <TrendingUpIcon sx={{ fontSize: 40, color: 'success.main' }} />
+              <Box>
+                <Typography color="textSecondary" gutterBottom>
+                  متوسط العمال/شركة
+                </Typography>
+                <Typography variant="h4">
+                  {generalStats.averageWorkersPerCompany}
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
 
       {/* المخططات */}
-      <Grid container spacing={3}>
+      <Box sx={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
+        gap: 3,
+        mb: 3
+      }}>
         {/* مخطط العمال حسب الجنسية */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                توزيع العمال حسب الجنسية
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={nationalityChartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {nationalityChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              توزيع العمال حسب الجنسية
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={nationalityChartData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }: any) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {nationalityChartData.map((_: any, index: number) => (
+                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
         {/* مخطط العمال حسب النوع */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                توزيع العمال حسب النوع
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={workerTypeChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              توزيع العمال حسب النوع
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={workerTypeChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
         {/* مخطط الشركات حسب التصنيف */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                توزيع الشركات حسب التصنيف
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={classificationChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" fill="#82ca9d" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              توزيع الشركات حسب التصنيف
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={classificationChartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#82ca9d" />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
         {/* مخطط التراخيص حسب النوع */}
-        <Grid item xs={12} md={6}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                توزيع التراخيص حسب النوع
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={licenseTypeChartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={80}
-                    fill="#ffc658"
-                    dataKey="value"
-                  >
-                    {licenseTypeChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              توزيع التراخيص حسب النوع
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={licenseTypeChartData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }: any) => `${name} ${((percent || 0) * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#ffc658"
+                  dataKey="value"
+                >
+                  {licenseTypeChartData.map((_: any, index: number) => (
+                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </Box>
 
-        {/* أفضل الشركات حسب عدد العمال */}
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                أفضل 10 شركات حسب عدد العمال
-              </Typography>
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={workersByCompany} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="name" 
-                    angle={-45}
-                    textAnchor="end"
-                    height={100}
-                  />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="workers" fill="#8884d8" name="عدد العمال" />
-                  <Bar dataKey="licenses" fill="#82ca9d" name="عدد التراخيص" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+      {/* أفضل الشركات حسب عدد العمال */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            أفضل 10 شركات حسب عدد العمال
+          </Typography>
+          <ResponsiveContainer width="100%" height={400}>
+            <BarChart data={workersByCompany} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="name" 
+                angle={-45}
+                textAnchor="end"
+                height={100}
+              />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="workers" fill="#8884d8" name="عدد العمال" />
+              <Bar dataKey="licenses" fill="#82ca9d" name="عدد التراخيص" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
       {/* إحصائيات تفصيلية */}
       <Paper sx={{ p: 3, mt: 3 }}>
@@ -451,8 +436,12 @@ const InteractiveReports: React.FC = () => {
         </Typography>
         <Divider sx={{ mb: 2 }} />
         
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+          gap: 2
+        }}>
+          <Box>
             <Typography variant="subtitle2" gutterBottom>
               إحصائيات العمال:
             </Typography>
@@ -467,9 +456,9 @@ const InteractiveReports: React.FC = () => {
                 />
               ))}
             </Box>
-          </Grid>
+          </Box>
 
-          <Grid item xs={12} md={6}>
+          <Box>
             <Typography variant="subtitle2" gutterBottom>
               إحصائيات الشركات:
             </Typography>
@@ -484,8 +473,8 @@ const InteractiveReports: React.FC = () => {
                 />
               ))}
             </Box>
-          </Grid>
-        </Grid>
+          </Box>
+        </Box>
       </Paper>
     </Box>
   );
