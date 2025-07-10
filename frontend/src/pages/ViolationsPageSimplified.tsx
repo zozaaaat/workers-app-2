@@ -104,8 +104,8 @@ const ViolationsPageSimplified: React.FC = () => {
   const fetchViolations = async () => {
     try {
       setLoading(true);
-      const data = await api.workers.getAll(); // سنعدل هذا لاحقاً
-      setViolations([]);
+      const data = await api.violations.getAll();
+      setViolations(data);
       setError('');
     } catch (err: any) {
       setError(err.response?.data?.detail || 'حدث خطأ في جلب بيانات المخالفات');
@@ -239,7 +239,7 @@ const ViolationsPageSimplified: React.FC = () => {
         worker_id: Number(formData.worker_id),
         penalty_amount: Number(formData.penalty_amount) || 0
       };
-      // await api.violations.create(dataToSend);
+      await api.violations.create(dataToSend);
       await fetchViolations();
       setAddDialogOpen(false);
       setError('');
@@ -259,7 +259,7 @@ const ViolationsPageSimplified: React.FC = () => {
         worker_id: Number(formData.worker_id),
         penalty_amount: Number(formData.penalty_amount) || 0
       };
-      // await api.violations.update(selectedViolation.id, dataToSend);
+      await api.violations.update(selectedViolation.id, dataToSend);
       await fetchViolations();
       setEditDialogOpen(false);
       setSelectedViolation(null);
@@ -275,7 +275,7 @@ const ViolationsPageSimplified: React.FC = () => {
     if (!selectedViolation) return;
     
     try {
-      // await api.violations.delete(selectedViolation.id);
+      await api.violations.delete(selectedViolation.id);
       await fetchViolations();
       setDeleteDialogOpen(false);
       setSelectedViolation(null);

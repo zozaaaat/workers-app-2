@@ -20,6 +20,8 @@ interface UniversalFormDialogProps {
   onSubmit?: () => void;
   onCancel?: () => void;
   submitLabel?: string;
+  submitText?: string; // for backwards compatibility
+  submitColor?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
   cancelLabel?: string;
   loading?: boolean;
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -35,6 +37,8 @@ const UniversalFormDialog: React.FC<UniversalFormDialogProps> = ({
   onSubmit,
   onCancel,
   submitLabel = "حفظ",
+  submitText, // for backwards compatibility
+  submitColor = 'primary',
   cancelLabel = "إلغاء",
   loading = false,
   maxWidth = 'sm',
@@ -48,6 +52,9 @@ const UniversalFormDialog: React.FC<UniversalFormDialogProps> = ({
       onClose();
     }
   };
+
+  // Use submitText if provided (backwards compatibility), otherwise use submitLabel
+  const finalSubmitText = submitText || submitLabel;
 
   const handleSubmit = () => {
     if (onSubmit) {
@@ -97,9 +104,10 @@ const UniversalFormDialog: React.FC<UniversalFormDialogProps> = ({
           <Button
             onClick={handleSubmit}
             variant="contained"
+            color={submitColor}
             disabled={loading || disableSubmit}
           >
-            {loading ? "جاري الحفظ..." : submitLabel}
+            {loading ? "جاري الحفظ..." : finalSubmitText}
           </Button>
         )}
       </DialogActions>

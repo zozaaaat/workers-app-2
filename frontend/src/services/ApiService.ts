@@ -254,6 +254,98 @@ export class AnalyticsService {
   }
 }
 
+// خدمة الغيابات
+export class AbsencesService {
+  static async getAll() {
+    return ApiService.get('/absences');
+  }
+
+  static async getById(id: number) {
+    return ApiService.get(`/absences/${id}`);
+  }
+
+  static async create(data: any) {
+    return ApiService.post('/absences', data);
+  }
+
+  static async update(id: number, data: any) {
+    return ApiService.put(`/absences/${id}`, data);
+  }
+
+  static async delete(id: number) {
+    return ApiService.delete(`/absences/${id}`);
+  }
+}
+
+// خدمة الإجازات
+export class LeavesService {
+  static async getAll() {
+    return ApiService.get('/leaves');
+  }
+
+  static async getById(id: number) {
+    return ApiService.get(`/leaves/${id}`);
+  }
+
+  static async create(data: any) {
+    return ApiService.post('/leaves', data);
+  }
+
+  static async update(id: number, data: any) {
+    return ApiService.put(`/leaves/${id}`, data);
+  }
+
+  static async delete(id: number) {
+    return ApiService.delete(`/leaves/${id}`);
+  }
+}
+
+// خدمة المخالفات
+export class ViolationsService {
+  static async getAll() {
+    return ApiService.get('/violations');
+  }
+
+  static async getById(id: number) {
+    return ApiService.get(`/violations/${id}`);
+  }
+
+  static async create(data: any) {
+    return ApiService.post('/violations', data);
+  }
+
+  static async update(id: number, data: any) {
+    return ApiService.put(`/violations/${id}`, data);
+  }
+
+  static async delete(id: number) {
+    return ApiService.delete(`/violations/${id}`);
+  }
+}
+
+// خدمة الخصومات
+export class DeductionsService {
+  static async getAll() {
+    return ApiService.get('/deductions');
+  }
+
+  static async getById(id: number) {
+    return ApiService.get(`/deductions/${id}`);
+  }
+
+  static async create(data: any) {
+    return ApiService.post('/deductions', data);
+  }
+
+  static async update(id: number, data: any) {
+    return ApiService.put(`/deductions/${id}`, data);
+  }
+
+  static async delete(id: number) {
+    return ApiService.delete(`/deductions/${id}`);
+  }
+}
+
 // Hook مخصص لاستخدام API
 export const useApi = () => {
   return {
@@ -263,6 +355,10 @@ export const useApi = () => {
     documents: DocumentsService,
     notifications: NotificationsService,
     analytics: AnalyticsService,
+    absences: AbsencesService,
+    leaves: LeavesService,
+    violations: ViolationsService,
+    deductions: DeductionsService,
   };
 };
 
