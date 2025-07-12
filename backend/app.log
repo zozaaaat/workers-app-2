@@ -1,0 +1,142 @@
+2025-07-12 17:41:14,274 - app.core.background_tasks - INFO - Starting background tasks
+2025-07-12 17:43:07,234 - app.core.background_tasks - INFO - Starting background tasks
+2025-07-12 17:46:55,391 - app.core.background_tasks - INFO - Starting background tasks
+2025-07-12 17:53:24,659 - app.core.background_tasks - INFO - Starting background tasks
+2025-07-12 17:54:07,371 - app.core.background_tasks - INFO - Starting background tasks
+2025-07-12 17:55:48,292 - app.core.background_tasks - INFO - Starting background tasks
+2025-07-12 17:57:32,485 - app.core.middleware - INFO - Request: GET /api/health - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 17:57:32,486 - app.core.middleware - INFO - GET /api/health - Status: 200 - Time: 0.0010s
+2025-07-12 17:57:48,126 - app.core.middleware - INFO - Request: GET / - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:48,127 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:48,128 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0004s
+2025-07-12 17:57:48,128 - app.core.middleware - INFO - GET / - Status: 200 - Time: 0.0016s
+2025-07-12 17:57:48,138 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:48,140 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:48,141 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0007s
+2025-07-12 17:57:48,142 - app.core.middleware - INFO - GET /api/companies/ - Status: 401 - Time: 0.0026s
+2025-07-12 17:57:48,144 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:48,146 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0006s
+2025-07-12 17:57:48,149 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:48,150 - app.core.middleware - INFO - GET /api/companies/ - Status: 401 - Time: 0.0011s
+2025-07-12 17:57:48,154 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:48,155 - app.core.middleware - INFO - GET /api/companies/ - Status: 401 - Time: 0.0011s
+2025-07-12 17:57:55,883 - app.core.middleware - INFO - Request: GET / - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:55,884 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:55,886 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0006s
+2025-07-12 17:57:55,887 - app.core.middleware - INFO - GET / - Status: 200 - Time: 0.0022s
+2025-07-12 17:57:55,896 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:55,897 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0005s
+2025-07-12 17:57:55,902 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:55,903 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0004s
+2025-07-12 17:57:55,909 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:55,911 - app.core.middleware - INFO - GET /api/companies/ - Status: 401 - Time: 0.0015s
+2025-07-12 17:57:55,918 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:55,921 - app.core.middleware - INFO - GET /api/companies/ - Status: 401 - Time: 0.0018s
+2025-07-12 17:57:55,926 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:57:55,929 - app.core.middleware - INFO - GET /api/companies/ - Status: 401 - Time: 0.0025s
+2025-07-12 17:59:04,428 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 17:59:04,430 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0006s
+2025-07-12 17:59:04,439 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 17:59:04,503 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0633s
+2025-07-12 17:59:13,125 - app.core.middleware - INFO - Request: GET / - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:59:13,126 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:59:13,127 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0004s
+2025-07-12 17:59:13,127 - app.core.middleware - INFO - GET / - Status: 200 - Time: 0.0016s
+2025-07-12 17:59:13,131 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:59:13,132 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0004s
+2025-07-12 17:59:13,134 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:59:13,137 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:59:13,138 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0007s
+2025-07-12 17:59:13,141 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0067s
+2025-07-12 17:59:13,143 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:59:13,148 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0044s
+2025-07-12 17:59:13,151 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 17:59:13,157 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0047s
+2025-07-12 18:00:31,401 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:00:31,402 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0003s
+2025-07-12 18:00:31,405 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:00:31,407 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0018s
+2025-07-12 18:00:41,084 - app.core.middleware - INFO - Request: GET / - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:00:41,086 - app.core.middleware - INFO - GET / - Status: 200 - Time: 0.0009s
+2025-07-12 18:00:41,092 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:00:41,093 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0005s
+2025-07-12 18:00:41,127 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:00:41,140 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0121s
+2025-07-12 18:00:41,145 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:00:41,146 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0005s
+2025-07-12 18:00:41,154 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:00:41,155 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0005s
+2025-07-12 18:00:41,160 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:00:41,166 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0055s
+2025-07-12 18:00:41,173 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:00:41,181 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0061s
+2025-07-12 18:01:43,367 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:01:43,368 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0002s
+2025-07-12 18:01:43,369 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:01:43,383 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0140s
+2025-07-12 18:02:18,962 - app.core.middleware - INFO - Request: GET /api/employees - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:02:18,962 - app.core.middleware - INFO - GET /api/employees - Status: 307 - Time: 0.0003s
+2025-07-12 18:02:18,964 - app.core.middleware - INFO - Request: GET /api/employees/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:02:18,966 - app.core.middleware - INFO - GET /api/employees/ - Status: 401 - Time: 0.0017s
+2025-07-12 18:02:47,988 - app.core.middleware - INFO - Request: GET / - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:47,990 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:47,992 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0009s
+2025-07-12 18:02:47,992 - app.core.middleware - INFO - GET / - Status: 200 - Time: 0.0035s
+2025-07-12 18:02:47,998 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:48,000 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0008s
+2025-07-12 18:02:48,001 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:48,008 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:48,009 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0006s
+2025-07-12 18:02:48,018 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0158s
+2025-07-12 18:02:48,019 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:48,028 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0078s
+2025-07-12 18:02:48,031 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:48,035 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0034s
+2025-07-12 18:02:51,583 - app.core.middleware - INFO - Request: GET / - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:51,583 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:51,583 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:51,584 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0010s
+2025-07-12 18:02:51,585 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0012s
+2025-07-12 18:02:51,585 - app.core.middleware - INFO - GET / - Status: 200 - Time: 0.0016s
+2025-07-12 18:02:51,590 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:51,594 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0022s
+2025-07-12 18:02:51,594 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:51,595 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:51,627 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0312s
+2025-07-12 18:02:51,628 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0319s
+2025-07-12 18:02:51,632 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:02:51,635 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0030s
+2025-07-12 18:02:56,632 - app.core.middleware - INFO - Request: GET /api/employees - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:02:56,633 - app.core.middleware - INFO - GET /api/employees - Status: 307 - Time: 0.0003s
+2025-07-12 18:02:56,634 - app.core.middleware - INFO - Request: GET /api/employees/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:02:56,644 - app.core.middleware - INFO - GET /api/employees/ - Status: 200 - Time: 0.0089s
+2025-07-12 18:04:40,711 - app.core.middleware - INFO - Request: GET /api/employees - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:04:40,712 - app.core.middleware - INFO - GET /api/employees - Status: 307 - Time: 0.0006s
+2025-07-12 18:04:40,715 - app.core.middleware - INFO - Request: GET /api/employees/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:04:40,721 - app.core.middleware - INFO - GET /api/employees/ - Status: 200 - Time: 0.0055s
+2025-07-12 18:04:59,410 - app.core.middleware - INFO - Request: GET /api/employees - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:04:59,410 - app.core.middleware - INFO - GET /api/employees - Status: 307 - Time: 0.0002s
+2025-07-12 18:04:59,411 - app.core.middleware - INFO - Request: GET /api/employees/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:04:59,414 - app.core.middleware - INFO - GET /api/employees/ - Status: 200 - Time: 0.0031s
+2025-07-12 18:06:05,421 - app.core.middleware - INFO - Request: GET /api/employees - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:06:05,422 - app.core.middleware - INFO - GET /api/employees - Status: 307 - Time: 0.0003s
+2025-07-12 18:06:05,423 - app.core.middleware - INFO - Request: GET /api/employees/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:06:05,431 - app.core.middleware - INFO - GET /api/employees/ - Status: 200 - Time: 0.0071s
+2025-07-12 18:06:30,741 - app.core.middleware - INFO - Request: GET /api/employees - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:06:30,741 - app.core.middleware - INFO - GET /api/employees - Status: 307 - Time: 0.0003s
+2025-07-12 18:06:30,743 - app.core.middleware - INFO - Request: GET /api/employees/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT; Windows NT 10.0; en-US) WindowsPowerShell/5.1.26100.4652
+2025-07-12 18:06:30,745 - app.core.middleware - INFO - GET /api/employees/ - Status: 200 - Time: 0.0019s
+2025-07-12 18:06:44,357 - app.core.middleware - INFO - Request: GET / - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:06:44,358 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:06:44,360 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0004s
+2025-07-12 18:06:44,360 - app.core.middleware - INFO - GET / - Status: 200 - Time: 0.0025s
+2025-07-12 18:06:44,364 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:06:44,368 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0022s
+2025-07-12 18:06:44,370 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:06:44,381 - app.core.middleware - INFO - Request: GET /api/companies - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:06:44,396 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:06:44,398 - app.core.middleware - INFO - GET /api/companies - Status: 307 - Time: 0.0150s
+2025-07-12 18:06:44,411 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0394s
+2025-07-12 18:06:44,412 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0143s
+2025-07-12 18:06:44,415 - app.core.middleware - INFO - Request: GET /api/companies/ - IP: 127.0.0.1 - User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0
+2025-07-12 18:06:44,418 - app.core.middleware - INFO - GET /api/companies/ - Status: 200 - Time: 0.0025s

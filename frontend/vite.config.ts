@@ -1,66 +1,40 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { fileURLToPath } from 'node:url';
-import { dirname, resolve } from 'node:path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
-export default defineConfig(({ mode }) => {
-  const isDev = mode === 'development';
-  
-  return {
-    plugins: [react()],
-    
-    // Performance optimizations
-    build: {
-      outDir: 'dist',
-      assetsDir: 'assets',
-      sourcemap: isDev,
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-        },
-      },
-    chunkSizeWarningLimit: 500,
-    // Enable code splitting
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['@mui/material', '@mui/icons-material'],
-          query: ['@tanstack/react-query'],
-          charts: ['chart.js', 'react-chartjs-2'],
-        },
-      },
-    },
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@pages': path.resolve(__dirname, './src/pages'),
+      '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@types': path.resolve(__dirname, './src/types'),
+      '@services': path.resolve(__dirname, './src/services'),
+      '@styles': path.resolve(__dirname, './src/styles'),
+      '@assets': path.resolve(__dirname, './src/assets')
+    }
   },
-
   server: {
     port: 5173,
-    host: true,
-    open: true,
-    cors: true,
+    host: '0.0.0.0',
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-        secure: false,
-        rewrite: (path: string) => path.replace(/^\/api/, ''),
-      },
-    },
+        target: 'http://localhost:8002',
+        changeOrigin: true
+      }
+    }
   },
-  resolve: {
-    alias: {
-      '@': resolve(dirname(fileURLToPath(import.meta.url)), './src'),
-    },
+  preview: {
+    port: 5173,
+    host: '0.0.0.0'
   },
-  css: {
-    modules: {
-      localsConvention: 'camelCaseOnly',
-    },
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom'],
-  },
-}});  // إغلاق صحيح للـ function والـ config
+  build: {
+    outDir: 'dist',
+    sourcemap: true
+  }
+})

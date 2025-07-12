@@ -1,70 +1,255 @@
-import { createContext, useContext, useState } from "react";
-import type { ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { authServiceNew } from '../services/auth-new'
+import { User, LoginResponse } from '../types'
 
-export type UserRole = "admin" | "manager" | "employee";
-export interface User {
-  username: string;
-  role: UserRole;
-}
-export interface ActivityLog {
-  user: string;
-  action: string;
-  date: string;
-}
+// Export User type for use in other components
+export type { User }
+import toast from 'react-hot-toast'
 
-export type Permission = "view" | "add" | "edit" | "delete";
-
-export const rolePermissions: Record<UserRole, Permission[]> = {
-  admin: ["view", "add", "edit", "delete"],
-  manager: ["view", "add", "edit"],
-  employee: ["view"],
-};
-
-interface AuthContextType {
-  user: User | null;
-  login: (username: string, role: UserRole) => void;
-  logout: () => void;
-  activityLog: ActivityLog[];
-  addActivity: (action: string) => void;
+export interface AuthState {
+  user: User | null
+  token: string | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  error: string | null
 }
 
-const AuthContext = createContext<AuthContextType & { permissions: Permission[] }>({
-  user: null,
-  login: () => {},
-  logout: () => {},
-  activityLog: [],
-  addActivity: () => {},
-  permissions: [],
-});
+export interface AuthContextType extends AuthState {
+  login: (username: string, password: string, companyId?: number) => Promise<boolean>
+  logout: () => Promise<void>
+  register: (userData: RegisterData) => Promise<void>
+  updateProfile: (userData: Partial<User>) => Promise<void>
+  refreshToken: () => Promise<void>
+  clearError: () => void
+  loading: boolean // للتوافق مع الكود السابق
+}
 
-export const useAuth = () => useContext(AuthContext);
+export interface RegisterData {
+  name: string
+  email: string
+  password: string
+  username?: string
+  phone?: string
+  role?: string
+  department?: string
+}
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [activityLog, setActivityLog] = useState<ActivityLog[]>([]);
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-  const login = (username: string, role: UserRole) => {
-    setUser({ username, role });
-    addActivity(`تسجيل دخول (${role})`);
-  };
-  const logout = () => {
-    addActivity("تسجيل خروج");
-    setUser(null);
-  };
-  const addActivity = (action: string) => {
-    if (user) {
-      setActivityLog((prev) => [
-        { user: user.username, action, date: new Date().toLocaleString() },
-        ...prev,
-      ]);
+interface AuthProviderProps {
+  children: ReactNode
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  const [authState, setAuthState] = useState<AuthState>({
+    user: null,
+    token: localStorage.getItem('token'),
+    isAuthenticated: false,
+    isLoading: true,
+    error: null
+  })
+
+  // تحقق من المصادقة عند تحميل التطبيق
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem('token')
+      if (token) {
+        try {
+          const userData = await authServiceNew.getCurrentUser()
+          if (userData) {
+            setAuthState((prev: AuthState) => ({
+              ...prev,
+              user: {
+                ...userData,
+                name: userData.name || userData.username || 'مستخدم',
+                is_active: true
+              },
+              token,
+              isAuthenticated: true,
+              isLoading: false
+            }))
+          } else {
+            // إذا كانت البيانات فارغة، أزل التوكن
+            localStorage.removeItem('token')
+            setAuthState((prev: AuthState) => ({
+              ...prev,
+              user: null,
+              token: null,
+              isAuthenticated: false,
+              isLoading: false
+            }))
+          }
+        } catch (error) {
+          localStorage.removeItem('token')
+          setAuthState((prev: AuthState) => ({
+            ...prev,
+            token: null,
+            isAuthenticated: false,
+            isLoading: false,
+            error: 'فشل في التحقق من المصادقة'
+          }))
+        }
+      } else {
+        setAuthState((prev: AuthState) => ({
+          ...prev,
+          isLoading: false
+        }))
+      }
     }
-  };
 
-  const permissions = user ? rolePermissions[user.role] : [];
+    initAuth()
+  }, [])
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, activityLog, addActivity, permissions }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  // دالة تسجيل الدخول
+  const login = async (username: string, password: string, companyId?: number): Promise<boolean> => {
+    setAuthState((prev: AuthState) => ({ ...prev, isLoading: true, error: null }))
+    
+    try {
+      const response = await authServiceNew.login({ username, password })
+      const token = (response as LoginResponse).access_token
+      localStorage.setItem('token', token)
+      
+      // حفظ معرف الشركة إذا تم تمريره
+      if (companyId) {
+        localStorage.setItem('company_id', companyId.toString())
+      }
+      
+      setAuthState((prev: AuthState) => ({
+        ...prev,
+        user: {
+          ...response.user,
+          name: response.user.name || response.user.username || 'مستخدم',
+          is_active: true
+        },
+        token,
+        isAuthenticated: true,
+        isLoading: false,
+        error: null
+      }))
+      
+      toast.success('تم تسجيل الدخول بنجاح')
+      return true
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'فشل في تسجيل الدخول'
+      setAuthState((prev: AuthState) => ({
+        ...prev,
+        isLoading: false,
+        error: errorMessage
+      }))
+      toast.error(errorMessage)
+      return false
+    }
+  }
+
+  // دالة تسجيل الخروج
+  const logout = async (): Promise<void> => {
+    try {
+      await authServiceNew.logout()
+    } catch (error) {
+      console.error('خطأ في تسجيل الخروج:', error)
+    } finally {
+      localStorage.removeItem('token')
+      setAuthState({
+        user: null,
+        token: null,
+        isAuthenticated: false,
+        isLoading: false,
+        error: null
+      })
+      toast.success('تم تسجيل الخروج بنجاح')
+    }
+  }
+
+  // دالة التسجيل (placeholder - سيتم إضافتها لاحقاً)
+  const register = async (userData: RegisterData): Promise<void> => {
+    setAuthState((prev: AuthState) => ({ ...prev, isLoading: true, error: null }))
+    
+    try {
+      // TODO: إضافة خدمة التسجيل
+      console.log('Register function called with:', userData)
+      // await authService.register(userData)
+      toast.success('تم إنشاء الحساب بنجاح')
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'فشل في إنشاء الحساب'
+      setAuthState((prev: AuthState) => ({
+        ...prev,
+        isLoading: false,
+        error: errorMessage
+      }))
+      toast.error(errorMessage)
+      throw error
+    }
+  }
+
+  // دالة تحديث الملف الشخصي (placeholder - سيتم إضافتها لاحقاً)
+  const updateProfile = async (userData: Partial<User>): Promise<void> => {
+    setAuthState((prev: AuthState) => ({ ...prev, isLoading: true, error: null }))
+    
+    try {
+      // TODO: إضافة خدمة تحديث الملف الشخصي
+      console.log('Update profile function called with:', userData)
+      // const updatedUser = await authService.updateProfile(userData)
+      setAuthState((prev: AuthState) => ({
+        ...prev,
+        // user: updatedUser,
+        isLoading: false,
+        error: null
+      }))
+      toast.success('تم تحديث الملف الشخصي بنجاح')
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'فشل في تحديث الملف الشخصي'
+      setAuthState((prev: AuthState) => ({
+        ...prev,
+        isLoading: false,
+        error: errorMessage
+      }))
+      toast.error(errorMessage)
+      throw error
+    }
+  }
+
+  // دالة تحديث الرمز المميز (placeholder - سيتم إضافتها لاحقاً)
+  const refreshToken = async (): Promise<void> => {
+    try {
+      // TODO: إضافة خدمة تحديث الرمز المميز
+      // const response = await authService.refreshToken()
+      // localStorage.setItem('token', response.token)
+      // setAuthState((prev: AuthState) => ({
+      //   ...prev,
+      //   token: response.token,
+      //   user: response.user || prev.user
+      // }))
+    } catch (error) {
+      await logout()
+      throw error
+    }
+  }
+
+  // دالة مسح الأخطاء
+  const clearError = (): void => {
+    setAuthState((prev: AuthState) => ({ ...prev, error: null }))
+  }
+
+  // قيم السياق
+  const value: AuthContextType = {
+    ...authState,
+    login,
+    logout,
+    register,
+    updateProfile,
+    refreshToken,
+    clearError,
+    loading: authState.isLoading // للتوافق مع الكود السابق
+  }
+
+  return React.createElement(AuthContext.Provider, { value }, children)
+}
+
+// Hook لاستخدام AuthContext
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
+}

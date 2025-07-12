@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اختبار تكامل النظام المحسن</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            direction: rtl;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn {
+            background: linear-gradient(45deg, #00c6ff, #0072ff);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 198, 255, 0.4);
+        }
+        .result {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #00c6ff;
+        }
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 اختبار تكامل النظام المحسن</h1>
+        <p>اختبار شامل للتأكد من عمل جميع مكونات النظام بشكل صحيح</p>
+
+        <div class="test-section">
+            <h2>🔧 اختبارات الاتصال الأساسية</h2>
+            <button class="btn" onclick="testBackendHealth()">اختبار حالة الخادم</button>
+            <button class="btn" onclick="testFrontendConnection()">اختبار اتصال الواجهة</button>
+            <button class="btn" onclick="testAPIProxy()">اختبار وكيل API</button>
+            <div id="connectionResults" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 اختبارات البيانات</h2>
+            <button class="btn" onclick="testCompaniesAPI()">اختبار API الشركات</button>
+            <button class="btn" onclick="testEmployeesAPI()">اختبار API الموظفين</button>
+            <button class="btn" onclick="testTasksAPI()">اختبار API المهام</button>
+            <button class="btn" onclick="testDashboardStats()">اختبار إحصائيات اللوحة</button>
+            <div id="dataResults" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔐 اختبارات الأمان</h2>
+            <button class="btn" onclick="testLogin()">اختبار تسجيل الدخول</button>
+            <button class="btn" onclick="testAuthToken()">اختبار رمز المصادقة</button>
+            <div id="authResults" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>📈 إحصائيات النظام</h2>
+            <div id="systemStats" class="stats-grid">
+                <div class="stat-card loading">
+                    <div class="stat-number" id="companiesCount">-</div>
+                    <div>الشركات</div>
+                </div>
+                <div class="stat-card loading">
+                    <div class="stat-number" id="employeesCount">-</div>
+                    <div>الموظفين</div>
+                </div>
+                <div class="stat-card loading">
+                    <div class="stat-number" id="tasksCount">-</div>
+                    <div>المهام</div>
+                </div>
+                <div class="stat-card loading">
+                    <div class="stat-number" id="systemStatus">-</div>
+                    <div>حالة النظام</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🔄 اختبار شامل</h2>
+            <button class="btn" onclick="runAllTests()" style="background: linear-gradient(45deg, #ff6b6b, #ff8e53);">تشغيل جميع الاختبارات</button>
+            <div id="allTestsResults" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8001';
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString('ar-SA');
+            return `[${timestamp}] <span class="${type}">${message}</span>\n`;
+        }
+
+        async function testBackendHealth() {
+            const results = document.getElementById('connectionResults');
+            results.innerHTML = log('🔍 اختبار حالة الخادم الخلفي...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.innerHTML += log(`✅ الخادم يعمل بنجاح: ${data.message}`, 'success');
+                    results.innerHTML += log(`📦 الميزات: ${data.features.join(', ')}`, 'info');
+                } else {
+                    results.innerHTML += log('❌ فشل في الاتصال بالخادم', 'error');
+                }
+            } catch (error) {
+                results.innerHTML += log(`❌ خطأ في الاتصال: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFrontendConnection() {
+            const results = document.getElementById('connectionResults');
+            results.innerHTML += log('🌐 اختبار اتصال الواجهة الأمامية...');
+            
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.innerHTML += log('✅ وكيل API يعمل بشكل صحيح', 'success');
+                    results.innerHTML += log(`📊 البيانات: ${JSON.stringify(data, null, 2)}`, 'info');
+                } else {
+                    results.innerHTML += log('❌ مشكلة في وكيل API', 'error');
+                }
+            } catch (error) {
+                results.innerHTML += log(`❌ خطأ في وكيل API: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAPIProxy() {
+            const results = document.getElementById('connectionResults');
+            results.innerHTML += log('🔄 اختبار وكيل API...');
+            
+            try {
+                const directResponse = await fetch(`${API_BASE}/`);
+                const proxyResponse = await fetch('/api/health');
+                
+                if (directResponse.ok && proxyResponse.ok) {
+                    results.innerHTML += log('✅ الاتصال المباشر ووكيل API يعملان', 'success');
+                } else {
+                    results.innerHTML += log('⚠️ مشكلة في أحد الاتصالات', 'error');
+                }
+            } catch (error) {
+                results.innerHTML += log(`❌ خطأ في اختبار الوكيل: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCompaniesAPI() {
+            const results = document.getElementById('dataResults');
+            results.innerHTML = log('🏢 اختبار API الشركات...');
+            
+            try {
+                const response = await fetch('/api/companies');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.innerHTML += log(`✅ تم تحميل ${data.total} شركة`, 'success');
+                    results.innerHTML += log(`📋 الشركات: ${data.companies.map(c => c.name).join(', ')}`, 'info');
+                } else {
+                    results.innerHTML += log('❌ فشل في تحميل الشركات', 'error');
+                }
+            } catch (error) {
+                results.innerHTML += log(`❌ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        async function testEmployeesAPI() {
+            const results = document.getElementById('dataResults');
+            results.innerHTML += log('👥 اختبار API الموظفين...');
+            
+            try {
+                const response = await fetch('/api/employees');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.innerHTML += log(`✅ تم تحميل ${data.total} موظف`, 'success');
+                    results.innerHTML += log(`👤 الموظفين: ${data.employees.map(e => e.name).join(', ')}`, 'info');
+                } else {
+                    results.innerHTML += log('❌ فشل في تحميل الموظفين', 'error');
+                }
+            } catch (error) {
+                results.innerHTML += log(`❌ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        async function testTasksAPI() {
+            const results = document.getElementById('dataResults');
+            results.innerHTML += log('📝 اختبار API المهام...');
+            
+            try {
+                const response = await fetch('/api/tasks');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.innerHTML += log(`✅ تم تحميل ${data.total} مهمة`, 'success');
+                    results.innerHTML += log(`📝 المهام: ${data.tasks.map(t => t.title).join(', ')}`, 'info');
+                } else {
+                    results.innerHTML += log('❌ فشل في تحميل المهام', 'error');
+                }
+            } catch (error) {
+                results.innerHTML += log(`❌ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDashboardStats() {
+            const results = document.getElementById('dataResults');
+            results.innerHTML += log('📊 اختبار إحصائيات اللوحة...');
+            
+            try {
+                const response = await fetch('/api/dashboard/stats');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    results.innerHTML += log('✅ تم تحميل الإحصائيات بنجاح', 'success');
+                    results.innerHTML += log(`📈 الإحصائيات: ${JSON.stringify(data, null, 2)}`, 'info');
+                    
+                    // تحديث البطاقات
+                    document.getElementById('companiesCount').textContent = data.total_companies;
+                    document.getElementById('employeesCount').textContent = data.total_employees;
+                    document.getElementById('tasksCount').textContent = data.total_tasks;
+                    document.getElementById('systemStatus').textContent = data.system_status;
+                    
+                    // إزالة التحميل
+                    document.querySelectorAll('.stat-card').forEach(card => card.classList.remove('loading'));
+                } else {
+                    results.innerHTML += log('❌ فشل في تحميل الإحصائيات', 'error');
+                }
+            } catch (error) {
+                results.innerHTML += log(`❌ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            const results = document.getElementById('authResults');
+            results.innerHTML = log('🔐 اختبار تسجيل الدخول...');
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'admin123'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.access_token) {
+                    results.innerHTML += log(`✅ تم تسجيل الدخول بنجاح: ${data.user.name}`, 'success');
+                    results.innerHTML += log(`🔑 الرمز: ${data.access_token.substring(0, 20)}...`, 'info');
+                    localStorage.setItem('authToken', data.access_token);
+                } else {
+                    results.innerHTML += log('❌ فشل في تسجيل الدخول', 'error');
+                }
+            } catch (error) {
+                results.innerHTML += log(`❌ خطأ: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAuthToken() {
+            const results = document.getElementById('authResults');
+            const token = localStorage.getItem('authToken');
+            
+            if (!token) {
+                results.innerHTML += log('⚠️ لا يوجد رمز مصادقة، قم بتسجيل الدخول أولاً', 'error');
+                return;
+            }
+            
+            results.innerHTML += log('🔍 اختبار رمز المصادقة...');
+            results.innerHTML += log(`🔑 الرمز المحفوظ: ${token.substring(0, 20)}...`, 'info');
+        }
+
+        async function runAllTests() {
+            const results = document.getElementById('allTestsResults');
+            results.innerHTML = log('🚀 بدء الاختبار الشامل...');
+            
+            const tests = [
+                { name: 'حالة الخادم', func: testBackendHealth },
+                { name: 'اتصال الواجهة', func: testFrontendConnection },
+                { name: 'وكيل API', func: testAPIProxy },
+                { name: 'API الشركات', func: testCompaniesAPI },
+                { name: 'API الموظفين', func: testEmployeesAPI },
+                { name: 'API المهام', func: testTasksAPI },
+                { name: 'إحصائيات اللوحة', func: testDashboardStats },
+                { name: 'تسجيل الدخول', func: testLogin }
+            ];
+            
+            let passed = 0;
+            let failed = 0;
+            
+            for (const test of tests) {
+                try {
+                    results.innerHTML += log(`⏳ تشغيل اختبار: ${test.name}`);
+                    await test.func();
+                    passed++;
+                    results.innerHTML += log(`✅ نجح اختبار: ${test.name}`, 'success');
+                } catch (error) {
+                    failed++;
+                    results.innerHTML += log(`❌ فشل اختبار: ${test.name} - ${error.message}`, 'error');
+                }
+                
+                // توقف قصير بين الاختبارات
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            results.innerHTML += log(`\n📊 نتائج الاختبار الشامل:`);
+            results.innerHTML += log(`✅ نجح: ${passed} اختبار`, 'success');
+            results.innerHTML += log(`❌ فشل: ${failed} اختبار`, failed > 0 ? 'error' : 'success');
+            results.innerHTML += log(`📈 معدل النجاح: ${((passed / tests.length) * 100).toFixed(1)}%`, 'info');
+        }
+
+        // تحميل الإحصائيات عند بدء التشغيل
+        window.addEventListener('load', () => {
+            testDashboardStats();
+        });
+    </script>
+</body>
+</html>

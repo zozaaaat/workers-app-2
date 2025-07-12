@@ -1,13 +1,21 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "shell",
-			"label": "Run Backend (FastAPI or Python)",
-			"command": "uvicorn app.main:app --reload",
-			"group": "build",
-			"isBackground": true,
-			"problemMatcher": []
-		}
-	]
+   "version": "2.0.0",
+   "tasks": [
+	  {
+		 "type": "shell",
+		 "label": "Run Backend (FastAPI from backend folder)",
+		 "command": "cd backend; C:/Python313/python.exe -m uvicorn app.main:app --reload",
+		 "group": "build",
+		 "isBackground": true,
+		 "problemMatcher": []
+	  },
+	  {
+		 "type": "shell",
+		 "label": "Run Frontend (Vite from frontend folder)",
+		 "command": "cd frontend; npm run dev",
+		 "group": "build",
+		 "isBackground": true,
+		 "problemMatcher": []
+	  }
+   ]
 }

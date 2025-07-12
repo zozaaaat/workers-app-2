@@ -1,35 +1,25 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App';
-import { AuthProvider } from './context/AuthContext'; // Import AuthProvider
-import { SnackbarProvider } from "./context/SnackbarContext";
-import './i18n'; // Import i18n configuration
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import './index.css'
+import './utils/api-test'
 
-// Import the required CSS for RTL support
-import 'react-datepicker/dist/react-datepicker.css';
-import './styles/datepicker-rtl.css';
+const rootElement = document.getElementById('root')
 
-// Initialize the app
-const container = document.getElementById('root');
-
-if (!container) {
-  throw new Error('Failed to find the root element');
-}
-
-const root = createRoot(container);
-
-root.render(
-  <StrictMode>
-    <SnackbarProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </SnackbarProvider>
-  </StrictMode>
-);
-
-// Enable hot module replacement in development
-if (import.meta.hot) {
-  import.meta.hot.accept();
+if (rootElement) {
+  const root = ReactDOM.createRoot(rootElement)
+  root.render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  )
+} else {
+  console.error('❌ Root element not found!')
+  document.body.innerHTML = `
+    <div style="padding: 50px; text-align: center; font-family: Arial;">
+      <h1 style="color: red;">❌ خطأ: Root element not found</h1>
+      <p>لم يتم العثور على العنصر بـ id="root"</p>
+      <p>تأكد من وجود &lt;div id="root"&gt;&lt;/div&gt; في index.html</p>
+    </div>
+  `
 }
