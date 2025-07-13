@@ -41,6 +41,9 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+  useEffect(() => {
+    console.log('[AuthProvider] Rendered. State:', authState);
+  });
   const [authState, setAuthState] = useState<AuthState>({
     user: null,
     token: localStorage.getItem('token'),
@@ -103,32 +106,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // دالة تسجيل الدخول
   const login = async (username: string, password: string, companyId?: number): Promise<boolean> => {
     setAuthState((prev: AuthState) => ({ ...prev, isLoading: true, error: null }))
-    
     try {
       const response = await authServiceNew.login({ username, password })
-      const token = (response as LoginResponse).access_token
-      localStorage.setItem('token', token)
-      
+      // التقاط التوكن بأي اسم يرجعه الباكند
+      const token = response.access_token || response.token || response.jwt || response.data?.access_token || response.data?.token || ''
+      if (token) {
+        localStorage.setItem('token', token)
+      }
       // حفظ معرف الشركة إذا تم تمريره
       if (companyId) {
         localStorage.setItem('company_id', companyId.toString())
       }
-      
       setAuthState((prev: AuthState) => ({
         ...prev,
-        user: {
+        user: response.user ? {
           ...response.user,
-          name: response.user.name || response.user.username || 'مستخدم',
+          name: response.user.full_name || response.user.username || 'مستخدم',
+          is_active: true
+        } : {
+          name: 'مستخدم',
           is_active: true
         },
         token,
-        isAuthenticated: true,
+        isAuthenticated: !!token,
         isLoading: false,
         error: null
       }))
-      
       toast.success('تم تسجيل الدخول بنجاح')
-      return true
+      return !!token
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'فشل في تسجيل الدخول'
       setAuthState((prev: AuthState) => ({

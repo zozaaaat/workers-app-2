@@ -377,157 +377,129 @@ interface PermissionProviderProps {
 }
 
 export const PermissionProvider: React.FC<PermissionProviderProps> = ({ children }) => {
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth()
-  const [permissions, setPermissions] = useState<string[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const [permissions, setPermissions] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log('[PermissionProvider] Rendered. Permissions:', permissions, 'User:', user, 'isAuthenticated:', isAuthenticated);
     if (!authLoading) {
+      let userPermissions: string[] = [];
       if (isAuthenticated && user) {
-        // الحصول على الصلاحيات من بيانات المستخدم
-        let userPermissions: string[] = []
-        
-        // إذا كان المستخدم لديه صلاحيات مخصصة
         if (user.permissions && user.permissions.length > 0) {
-          userPermissions = user.permissions
-        } 
-        // إذا كان المستخدم لديه دور
-        else if (user.roleData && user.roleData.permissions) {
-          userPermissions = user.roleData.permissions
-        }
-        // إذا كان المستخدم لديه دور كنص - استخدام ROLE_PERMISSIONS
-        else if (user.role) {
-          const rolePermissions = ROLE_PERMISSIONS[user.role as Role]
+          userPermissions = user.permissions;
+        } else if (user.roleData && user.roleData.permissions) {
+          userPermissions = user.roleData.permissions;
+        } else if (user.role) {
+          const rolePermissions = ROLE_PERMISSIONS[user.role as Role];
           if (rolePermissions) {
-            userPermissions = rolePermissions
+            userPermissions = rolePermissions;
           }
         }
-        
-        setPermissions(userPermissions)
-      } else {
-        setPermissions([])
       }
-      setIsLoading(false)
+      setPermissions(userPermissions);
+      setIsLoading(false);
     }
-  }, [user, isAuthenticated, authLoading])
+  }, [user, isAuthenticated, authLoading]);
 
-  // التحقق من وجود صلاحية واحدة أو أكثر
+  // ...existing code...
   const hasPermission = (permission: string | string[]): boolean => {
     if (Array.isArray(permission)) {
-      return permission.some(p => permissions.includes(p))
+      return permission.some(p => permissions.includes(p));
     }
-    return permissions.includes(permission)
-  }
+    return permissions.includes(permission);
+  };
 
-  // التحقق من وجود أي من الصلاحيات المحددة
   const hasAnyPermission = (permissionsToCheck: string[]): boolean => {
-    return permissionsToCheck.some(permission => permissions.includes(permission))
-  }
+    return permissionsToCheck.some(permission => permissions.includes(permission));
+  };
 
-  // التحقق من وجود جميع الصلاحيات المحددة
   const hasAllPermissions = (permissionsToCheck: string[]): boolean => {
-    return permissionsToCheck.every(permission => permissions.includes(permission))
-  }
+    return permissionsToCheck.every(permission => permissions.includes(permission));
+  };
 
-  // التحقق من وجود دور واحد أو أكثر
   const hasRole = (role: string | string[]): boolean => {
-    if (!user) return false
-    
-    const userRole = typeof user.role === 'string' ? user.role : user.roleData?.name || ''
-    
+    if (!user) return false;
+    const userRole = typeof user.role === 'string' ? user.role : user.roleData?.name || '';
     if (Array.isArray(role)) {
-      return role.some(r => userRole === r)
+      return role.some(r => userRole === r);
     }
-    return userRole === role
-  }
+    return userRole === role;
+  };
 
-  // التحقق من إمكانية الوصول إلى مورد معين
   const canAccess = (resource: string, action: string): boolean => {
-    const permission = `${resource}.${action}`
-    return hasPermission(permission)
-  }
+    const permission = `${resource}.${action}`;
+    return hasPermission(permission);
+  };
 
-  // التحقق من إمكانية الوصول إلى صفحة معينة
   const canAccessPage = (pagePath: string): boolean => {
-    const requiredPermissions = PAGE_ACCESS[pagePath]
+    const requiredPermissions = PAGE_ACCESS[pagePath];
     if (!requiredPermissions || requiredPermissions.length === 0) {
-      return true // السماح بالوصول إذا لم تكن هناك قيود
+      return true;
     }
-    return hasAnyPermission(requiredPermissions)
-  }
+    return hasAnyPermission(requiredPermissions);
+  };
 
-  // التحقق من إمكانية استخدام ميزة معينة
   const canUseFeature = (featureName: string): boolean => {
-    const requiredPermissions = FEATURE_ACCESS[featureName]
+    const requiredPermissions = FEATURE_ACCESS[featureName];
     if (!requiredPermissions || requiredPermissions.length === 0) {
-      return true // السماح بالاستخدام إذا لم تكن هناك قيود
+      return true;
     }
-    return hasAllPermissions(requiredPermissions)
-  }
+    return hasAllPermissions(requiredPermissions);
+  };
 
-  // الحصول على صلاحيات دور معين
   const getRolePermissions = (role: Role): Permission[] => {
-    return ROLE_PERMISSIONS[role] || []
-  }
+    return ROLE_PERMISSIONS[role] || [];
+  };
 
-  // التحقق من كون المستخدم مدير
   const isManager = (): boolean => {
-    return hasRole([ROLES.HR_MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN])
-  }
+    return hasRole([ROLES.HR_MANAGER, ROLES.ADMIN, ROLES.SUPER_ADMIN]);
+  };
 
-  // التحقق من كون المستخدم مدير عام
   const isAdmin = (): boolean => {
-    return hasRole([ROLES.ADMIN, ROLES.SUPER_ADMIN])
-  }
+    return hasRole([ROLES.ADMIN, ROLES.SUPER_ADMIN]);
+  };
 
-  // التحقق من كون المستخدم مدير عام للنظام
   const isSuperAdmin = (): boolean => {
-    return hasRole(ROLES.SUPER_ADMIN)
-  }
+    return hasRole(ROLES.SUPER_ADMIN);
+  };
 
-  // التحقق من إمكانية تعديل التراخيص
   const canEditLicenses = (): boolean => {
-    return hasPermission(PERMISSIONS.LICENSES_EDIT)
-  }
+    return hasPermission(PERMISSIONS.LICENSES_EDIT);
+  };
 
-  // التحقق من إمكانية إضافة موظفين
   const canAddEmployees = (): boolean => {
-    return hasPermission(PERMISSIONS.EMPLOYEES_CREATE)
-  }
+    return hasPermission(PERMISSIONS.EMPLOYEES_CREATE);
+  };
 
-  // التحقق من إمكانية اعتماد الإجازات
   const canApproveLeaves = (): boolean => {
-    return hasPermission(PERMISSIONS.LEAVES_APPROVE)
-  }
+    return hasPermission(PERMISSIONS.LEAVES_APPROVE);
+  };
 
-  // التحقق من إمكانية إدارة المستخدمين
   const canManageUsers = (): boolean => {
     return hasAnyPermission([
       PERMISSIONS.USERS_CREATE,
       PERMISSIONS.USERS_EDIT,
       PERMISSIONS.USERS_DELETE,
       PERMISSIONS.USERS_PERMISSIONS
-    ])
-  }
+    ]);
+  };
 
-  // التحقق من إمكانية الوصول للتقارير
   const canAccessReports = (): boolean => {
-    return hasPermission(PERMISSIONS.REPORTS_VIEW)
-  }
+    return hasPermission(PERMISSIONS.REPORTS_VIEW);
+  };
 
-  // التحقق من إمكانية إدارة الوثائق
   const canManageDocuments = (): boolean => {
     return hasAnyPermission([
       PERMISSIONS.DOCUMENTS_UPLOAD,
       PERMISSIONS.DOCUMENTS_DELETE
-    ])
-  }
+    ]);
+  };
 
-  // الحصول على دور المستخدم الحالي
   const getUserRole = (): string | null => {
-    if (!user) return null
-    return typeof user.role === 'string' ? user.role : user.roleData?.name || null
-  }
+    if (!user) return null;
+    return typeof user.role === 'string' ? user.role : user.roleData?.name || null;
+  };
 
   const value: PermissionContextType = {
     permissions,
@@ -550,114 +522,16 @@ export const PermissionProvider: React.FC<PermissionProviderProps> = ({ children
     canManageDocuments,
     isLoading,
     userRole: getUserRole()
-  }
+  };
 
-  return React.createElement(PermissionContext.Provider, { value }, children)
-}
+  return React.createElement(PermissionContext.Provider, { value }, children);
+};
 
+// Hook to use PermissionContext
 export const usePermissions = () => {
-  const context = useContext(PermissionContext)
-  if (context === undefined) {
-    throw new Error('usePermissions must be used within a PermissionProvider')
+  const context = useContext(PermissionContext);
+  if (!context) {
+    throw new Error('usePermissions must be used within a PermissionProvider');
   }
-  return context
-}
-
-// Hook للتحقق من صلاحية معينة
-export const useHasPermission = (permission: string | string[]) => {
-  const { hasPermission } = usePermissions()
-  return hasPermission(permission)
-}
-
-// Hook للتحقق من دور معين
-export const useHasRole = (role: string | string[]) => {
-  const { hasRole } = usePermissions()
-  return hasRole(role)
-}
-
-// Hook للتحقق من إمكانية الوصول
-export const useCanAccess = (resource: string, action: string) => {
-  const { canAccess } = usePermissions()
-  return canAccess(resource, action)
-}
-
-// Hook للتحقق من إمكانية الوصول لصفحة
-export const useCanAccessPage = (pagePath: string) => {
-  const { canAccessPage } = usePermissions()
-  return canAccessPage(pagePath)
-}
-
-// Hook للتحقق من إمكانية استخدام ميزة
-export const useCanUseFeature = (featureName: string) => {
-  const { canUseFeature } = usePermissions()
-  return canUseFeature(featureName)
-}
-
-// Hook للتحقق من كون المستخدم مدير
-export const useIsManager = () => {
-  const { isManager } = usePermissions()
-  return isManager()
-}
-
-// Hook للتحقق من كون المستخدم مدير عام
-export const useIsAdmin = () => {
-  const { isAdmin } = usePermissions()
-  return isAdmin()
-}
-
-// Hook للتحقق من إمكانية تعديل التراخيص
-export const useCanEditLicenses = () => {
-  const { canEditLicenses } = usePermissions()
-  return canEditLicenses()
-}
-
-// Hook للتحقق من إمكانية إضافة موظفين
-export const useCanAddEmployees = () => {
-  const { canAddEmployees } = usePermissions()
-  return canAddEmployees()
-}
-
-// مكون لحماية المحتوى بناءً على الصلاحيات
-interface ProtectedComponentProps {
-  children: ReactNode
-  permission?: string | string[]
-  role?: string | string[]
-  fallback?: ReactNode
-  requireAll?: boolean // يتطلب جميع الصلاحيات أو أي منها
-}
-
-export const ProtectedComponent: React.FC<ProtectedComponentProps> = ({
-  children,
-  permission,
-  role,
-  fallback = null,
-  requireAll = false
-}) => {
-  const { hasPermission, hasRole } = usePermissions()
-
-  let hasAccess = true
-
-  if (permission) {
-    if (Array.isArray(permission)) {
-      hasAccess = requireAll 
-        ? permission.every(p => hasPermission(p))
-        : permission.some(p => hasPermission(p))
-    } else {
-      hasAccess = hasPermission(permission)
-    }
-  }
-
-  if (role && hasAccess) {
-    if (Array.isArray(role)) {
-      hasAccess = requireAll 
-        ? role.every(r => hasRole(r))
-        : role.some(r => hasRole(r))
-    } else {
-      hasAccess = hasRole(role)
-    }
-  }
-
-  return hasAccess ? React.createElement(React.Fragment, {}, children) : fallback
-}
-
-export default PermissionContext
+  return context;
+};
